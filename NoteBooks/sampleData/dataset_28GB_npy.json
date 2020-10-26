@@ -1,0 +1,167 @@
+{
+    "description": "Sample fake data to show clara train sdk capabilities",
+    "training": [
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        }
+    ],
+    "validation": [
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        }
+    ]
+}

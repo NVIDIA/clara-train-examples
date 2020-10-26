@@ -1,0 +1,144 @@
+{
+  "epochs": 2,
+  "num_training_epoch_per_valid": 1,
+  "learning_rate": 1e-4,
+  "multi_gpu": false,
+  "dynamic_input_shape": false,
+  "use_amp": false,
+
+  "train": {
+    "loss": {
+      "path": "myLoss.MyClonedDiceLoss",
+      "args": {
+        "skip_background": true,
+        "smooth":1e-5,
+        "squared_pred":true
+      }
+    },
+    "optimizer": {
+      "name": "Adam"
+    },
+    "model": {
+      "path": "myNetworkArch.CustomNetwork",
+      "args": {
+        "num_classes": 2
+      }
+    },
+    "pre_transforms": [
+      {
+        "name": "LoadNifti",
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ConvertToChannelsFirst",
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ScaleByResolution#ScaleImg",
+        "args": {
+          "fields": ["image"],
+          "target_resolution": [1.0,1.0,1.0]
+        }
+      },
+      {
+        "name": "ScaleByResolution#ScaleLb",
+        "args": {
+          "fields": ["label"],
+          "is_label": true,
+          "target_resolution": [1.0,1.0,1.0]
+        }
+      },
+      {
+        "name": "ScaleIntensityRange",
+        "args": {
+          "fields": "image",
+          "a_min": -57,
+          "a_max": 164,
+          "b_min": 0.0,
+          "b_max": 1.0,
+          "clip": true
+        }
+      },
+      {
+        "name": "FastPosNegRatioCropROI",
+        "args": {
+          "size": [64, 64, 64],
+          "image_field": "image",
+          "label_field": "label",
+          "deform": false,
+          "rotation": false, "rotation_degree": 20,
+          "scale": false,"scale_factor": 0.1,
+          "pos": 1,
+          "neg": 1,
+          "fast_crop": true
+        }
+      }
+    ],
+    "image_pipeline": {
+      "name": "SegmentationImagePipeline",
+      "args": {
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "training",
+        "output_crop_size": [64, 64, 64],
+        "output_batch_size": 4,
+        "batched_by_transforms": false,
+        "num_workers": 4,
+        "prefetch_size": 8
+      }
+    }
+  },
+  "validate": {
+    "metrics": [
+      {
+        "name": "ComputeAverageDice",
+        "args": {
+          "name": "mean_dice",
+          "is_key_metric": true,
+          "field": "model",
+          "label_field": "label"
+        }
+      }
+    ],
+    "pre_transforms": [
+      {
+         "ref": "LoadNifti"
+      },
+      {
+         "ref": "ConvertToChannelsFirst"
+      },
+      {
+         "ref": "ScaleImg"
+       },
+       {
+         "ref": "ScaleLb"
+       },
+       {
+         "ref": "ScaleIntensityRange"
+      }
+    ],
+    "image_pipeline": {
+      "name": "SegmentationImagePipeline",
+      "args": {
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "validation",
+        "output_crop_size": [64, 64, 64],
+        "output_batch_size": 1,
+        "num_workers": 2,
+        "prefetch_size": 2
+      }
+    },
+    "inferer": {
+      "name": "TFScanWindowInferer",
+      "args": {
+        "roi_size": [64, 64, 64]
+      }
+    }
+  }
+}
+

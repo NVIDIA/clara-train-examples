@@ -1,0 +1,243 @@
+{
+  "epochs": 2,
+  "num_training_epoch_per_valid": 20,
+  "train_summary_recording_interval": 10,
+  "use_scanning_window": false,
+  "multi_gpu": false,
+  "learning_rate": 1e-3,
+  "use_amp": false,
+  "dynamic_input_shape": true,
+
+   "search": [
+     {
+       "args": ["use_amp"],
+       "type": "enum",
+       "domain": "net",
+       "targets": [[true], [false]]
+     }
+   ],
+
+  "train": {
+    "loss": {
+      "name": "Dice",
+      "args": {
+        "squared_pred": true,
+        "is_onehot_targets": false,
+        "skip_background": true
+      }
+    },
+    "optimizer": {
+      "name": "Adam"
+    },
+    "aux_ops": [
+      {
+        "name": "DiceMaskedOutput",
+        "args": {
+        "skip_background": true,
+          "tags": [
+            "dice_tc"
+          ]
+        }
+      }
+    ],
+    "lr_policy": {
+      "name": "ReduceCosine",
+      "args": {
+        "rate": 0.5
+      }
+    },
+    "__model": {
+      "name": "Unet",
+      "args": {
+        "num_classes": 8,
+        "nf_enc":"32,64,64,64",
+        "nf_dec":"64,64,64,64,64,32,32",
+        "use_group_norm": true,
+        "use_batch_norm": false
+      },
+      "__search": [
+        {
+          "type": "enum",
+          "args": ["use_group_norm", "use_batch_norm"],
+          "targets": [[false,true]],
+          "domain": "net"
+        }
+        ]
+    },
+    "model": {
+      "name": "TestAMPSegResnet",
+      "path": "CustomArch.SegResnet",
+      "args": {
+        "num_classes": 8,
+        "use_vae": false,
+        "blocks_down": "1,2,2,4",
+        "blocks_up": "1,1,1",
+        "init_filters": 8,
+        "use_batch_norm": false,
+        "use_group_norm": false,
+        "pabloBN": false,
+        "use_group_normG": 8,
+        "reg_weight": 1e-5,
+        "dropout_prob": 0.2,
+        "final_activation": "sigmoid",
+         "factor":2,
+         "skipConnection":true,
+         "leaky_relu_alpha":0.2
+         ,"concat_enc_dec":false
+         ,"blockHas2convs":true
+      },
+      "___search": [
+        {
+          "type": "enum",
+          "args": ["use_group_norm", "use_batch_norm"],
+          "targets": [[true,false],
+                      [false,true]],
+          "domain": "net"
+        }
+      ]
+    },
+    "pre_transforms": [
+      {
+        "name": "LoadNifti",
+        "disabled": false,
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ConvertToChannelsFirst",
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ScaleByResolution#ScaleImg",
+        "args": {
+          "fields": ["image"],
+          "target_resolution": [1.0,1.0,1.0]
+        }
+      },
+      {
+        "name": "ScaleByResolution#ScaleLb",
+        "args": {
+          "fields": ["label"],
+          "is_label": true,
+          "target_resolution": [1.0,1.0,1.0]
+        }
+      },
+      {
+        "name": "ScaleIntensityRange",
+        "args": {
+          "fields": "image",
+          "a_min": -200,
+          "a_max": 200,
+          "b_min": 0.0,
+          "b_max": 1.0,
+          "clip": true
+        }
+      },
+      {
+        "name": "CropFixedSizeRandomCenter",
+        "args": {
+          "size": [64, 64, 64],
+          "fields": [
+            "image",
+            "label"
+          ]
+        }
+      },
+      {
+        "name": "RandomSpatialFlip",
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ScaleShiftIntensity",
+        "args": {
+          "fields": "image",
+          "scale":0.1, "shift":0.1
+        }
+      },
+      {
+        "name": "ScaleIntensityOscillation",
+        "args": {
+          "fields": "image",
+          "magnitude": 0.10,
+          "probability": 0.1
+        }
+      },
+      {
+        "name": "AddGaussianNoise",
+        "args": {
+          "fields": "image",
+          "probability": 0.10
+        }
+      }
+    ],
+    "image_pipeline": {
+      "name": "SegmentationImagePipeline",
+      "args": {
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "training",
+        "output_crop_size": [64, 64, 64],
+        "output_batch_size": 32,
+        "batched_by_transforms": false,
+        "output_image_channels": 1,
+        "output_label_channels": 1,
+        "num_workers": 4,
+        "prefetch_size": 10
+      }
+    }
+  },
+  "validate": {
+    "metrics":
+    [
+        {
+            "name": "ComputeAverage",
+            "args": {
+              "name": "mean_dice_tc",
+              "is_key_metric": true,
+              "field": "dice_tc"
+            }
+        }
+    ],
+    "image_pipeline": {
+      "name": "SegmentationImagePipeline",
+      "args": {
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "validation",
+        "output_crop_size": [64, 64, 64],
+        "output_batch_size": 1,
+        "output_image_channels": 1,
+        "num_workers": 8,
+        "prefetch_size": 1
+      }
+    },
+    "pre_transforms": [
+       {
+         "ref": "LoadNifti"
+       },
+       {
+         "ref": "ConvertToChannelsFirst"
+       },
+       {
+         "ref": "ScaleImg"
+       },
+       {
+         "ref": "ScaleLb"
+       },
+       {
+         "ref": "ScaleIntensityRange"
+       },
+      {
+         "ref": "CropFixedSizeRandomCenter"
+      }
+    ],
+    "inferer": {
+      "name": "TFSimpleInferer"
+    }
+  }
+}

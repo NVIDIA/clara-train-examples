@@ -1,0 +1,162 @@
+{
+  "use_scanning_window": true,
+  "multi_gpu": false,
+  "batch_size": 1,
+  "inferer": {
+    "name": "TFScanWindowInferer",
+    "args": {
+      "roi_size": [64, 64, 64],
+      "batch_size": 1
+    }
+  },
+  "model_loader": {
+    "name": "CheckpointLoader",
+    "args": {
+      "checkpoint_dir": "{MMAR_CKPT_DIR}"
+    }
+  },
+  "pre_transforms": [
+    {
+      "name": "LoadNifti",
+      "args": {
+        "fields": [
+          "image"
+        ]
+      }
+    },
+    {
+      "name": "ConvertToChannelsFirst",
+      "args": {
+        "fields": [
+          "image"
+        ]
+      }
+    },
+    {
+      "name": "ScaleByResolution",
+      "args": {
+        "fields": ["image"],
+        "target_resolution": [1.0,1.0,1.0]
+      }
+    },
+    {
+      "name": "ScaleIntensityRange",
+      "args": {
+        "fields": "image",
+        "a_min": -57,
+        "a_max": 164,
+        "b_min": 0.0,
+        "b_max": 1.0,
+        "clip": true
+      }
+    }
+  ],
+  "post_transforms": [
+    {
+      "name": "ArgmaxAcrossChannels",
+      "args": {
+        "fields": "model"
+      }
+    },
+    {
+      "name": "SplitBasedOnLabel",
+      "args": {
+        "field": "model",
+        "label_names": ["pred_class0", "pred_class1", "pred_class2"]
+      }
+    },
+    {
+      "name": "CopyProperties",
+      "args": {
+        "fields": ["pred_class0", "pred_class1", "pred_class2", "model"],
+        "from_field": "image",
+        "properties": ["affine"]
+      }
+    }
+  ],
+  "label_transforms": [
+    {
+      "name": "LoadNifti",
+      "args": {
+        "fields": "label"
+      }
+    },
+    {
+      "name": "ConvertToChannelsFirst",
+      "args": {
+        "fields": [
+          "label"
+        ]
+      }
+    },
+    {
+      "name": "ScaleByResolution",
+      "args": {
+        "fields": ["label"],
+        "is_label": true,
+        "target_resolution": [1.0,1.0,1.0]
+      }
+    },
+    {
+      "name": "SplitBasedOnLabel",
+      "args": {
+        "field": "label",
+        "label_names": ["label_class0", "label_class1", "label_class2"]
+      }
+    }
+  ],
+  "val_metrics": [
+    {
+      "name": "ComputeAverageDice",
+      "args": {
+        "name": "mean_dice_class1",
+        "field": "pred_class1",
+        "label_field": "label_class1",
+        "report_path": "{MMAR_EVAL_OUTPUT_PATH}"
+      }
+    },
+    {
+      "name": "ComputeAverageDice",
+      "args": {
+        "name": "mean_dice_class2",
+        "field": "pred_class2",
+        "label_field": "label_class2",
+        "report_path": "{MMAR_EVAL_OUTPUT_PATH}"
+      }
+    }
+  ],
+  "writers": [
+    {
+      "name": "WriteNifti",
+      "args": {
+        "field": "model",
+        "dtype": "uint8",
+        "write_path": "{MMAR_EVAL_OUTPUT_PATH}"
+      }
+    },
+    {
+      "name": "WriteNifti",
+      "args": {
+        "field": "pred_class0",
+        "dtype": "uint8",
+        "write_path": "{MMAR_EVAL_OUTPUT_PATH}"
+      }
+    },
+    {
+      "name": "WriteNifti",
+      "args": {
+        "field": "pred_class1",
+        "dtype": "uint8",
+        "write_path": "{MMAR_EVAL_OUTPUT_PATH}"
+      }
+    },
+    {
+      "name": "WriteNifti",
+      "args": {
+        "field": "pred_class2",
+        "dtype": "uint8",
+        "write_path": "{MMAR_EVAL_OUTPUT_PATH}"
+      }
+    }
+  ]
+}

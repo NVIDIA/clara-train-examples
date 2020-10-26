@@ -1,0 +1,130 @@
+{
+  "epochs": 2,
+  "num_training_epoch_per_valid": 1,
+  "learning_rate": 1e-4,
+  "multi_gpu": false,
+  "dynamic_input_shape": false,
+  "use_amp": false,
+
+  "train": {
+    "loss": {
+      "name": "Focal"
+    },
+    "optimizer": {
+      "name": "Adam"
+    },
+    "model": {
+      "name": "Unet",
+      "args": {
+        "num_classes": 2,
+        "nf_enc":"32,64,64,64",
+        "nf_dec":"64,64,64,64,64,32,32"
+      }
+    },
+    "pre_transforms": [
+      {
+        "name": "MyNumpyLoader",
+        "path": "myNpLoader.MyNumpyLoader",
+        "args": {
+          "fields": ["image", "label"],
+          "shape": "DHW"
+        }
+      },
+      {
+        "name": "ConvertToChannelsFirst",
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ScaleIntensityRange",
+        "args": {
+          "fields": "image",
+          "a_min": -57,
+          "a_max": 164,
+          "b_min": 0.0,
+          "b_max": 1.0,
+          "clip": true
+        }
+      },
+      {
+        "name": "FastPosNegRatioCropROI",
+        "args": {
+          "size": [64, 64, 64],
+          "image_field": "image",
+          "label_field": "label",
+          "deform": false,
+          "rotation": false, "rotation_degree": 20,
+          "scale": false,"scale_factor": 0.1,
+          "pos": 1,
+          "neg": 1,
+          "fast_crop": true
+        }
+      },
+      {
+         "name": "SaveAsNifti",
+         "args": {
+             "fields": ["image","label"],
+             "out_dir": "/claraDevDay/tmp/_debugPatches/",
+             "interrupt": false
+         }
+      }
+    ],
+    "image_pipeline": {
+      "name": "SegmentationImagePipeline",
+      "args": {
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "training",
+        "output_crop_size": [64, 64, 64],
+        "output_batch_size": 4,
+        "batched_by_transforms": false,
+        "num_workers": 4,
+        "prefetch_size": 8
+      }
+    }
+  },
+  "validate": {
+    "metrics": [
+      {
+        "name": "ComputeAverageDice",
+        "args": {
+          "name": "mean_dice",
+          "is_key_metric": true,
+          "field": "model",
+          "label_field": "label"
+        }
+      }
+    ],
+    "pre_transforms": [
+      {
+         "ref": "MyNumpyLoader"
+      },
+      {
+         "ref": "ConvertToChannelsFirst"
+      },
+      {
+         "ref": "ScaleIntensityRange"
+      }
+    ],
+    "image_pipeline": {
+      "name": "SegmentationImagePipeline",
+      "args": {
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "validation",
+        "output_crop_size": [64, 64, 64],
+        "output_batch_size": 1,
+        "num_workers": 2,
+        "prefetch_size": 2
+      }
+    },
+    "inferer": {
+      "name": "TFScanWindowInferer",
+      "args": {
+        "roi_size": [64, 64, 64]
+      }
+    }
+  }
+}
+

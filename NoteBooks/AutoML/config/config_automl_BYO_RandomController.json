@@ -1,0 +1,35 @@
+{
+  "handlers": [
+    {
+      "name": "MMARHandler",
+      "args": {
+        "num_mmars_to_keep": 30,
+        "stop_threshold": 1.0,
+        "train_config_file": "{trainconf}",
+        "work_dir":"/claraDevDay/AutoML/models",
+        "key_mmar_content_only": true
+      }
+    },
+    {
+      "name": "StatsHandler"
+    },
+    {
+      "path": "myAutoMLController.MyHandler"
+    }
+
+  ],
+  "executor": {
+    "name": "MMARExecutor",
+    "args": {
+      "msg_destination": "file",
+      "remove_search_augs": true
+    }
+  },
+  "controller": {
+    "name": "myController",
+    "path": "myAutoMLController.RandomController",
+    "args": {
+      "max_rounds": 8
+    }
+  }
+}

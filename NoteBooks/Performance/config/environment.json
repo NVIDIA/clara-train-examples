@@ -1,0 +1,8 @@
+{
+    "DATA_ROOT": "/workspace/data/Task09_Spleen_nii",
+    "DATASET_JSON": "/workspace/data/Task09_Spleen_nii/dataset_0.json",
+    "PROCESSING_TASK": "segmentation",
+    "MMAR_EVAL_OUTPUT_PATH": "eval",
+    "MMAR_CKPT_DIR": "models",
+    "PRETRAIN_WEIGHTS_FILE": "/var/tmp/resnet50_weights_tf_dim_ordering_tf_kernels.h5"
+}

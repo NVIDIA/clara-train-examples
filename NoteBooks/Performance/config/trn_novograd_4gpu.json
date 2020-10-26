@@ -1,0 +1,161 @@
+{
+    "epochs": 900,
+    "num_training_epoch_per_valid": 30,
+  "learning_rate": 0.002,
+    "multi_gpu": true,
+    "dynamic_input_shape": false,
+    "use_amp": false,
+  
+    "train": {
+      "loss": {
+        "name": "Dice"
+      },
+      "optimizer": {
+        "name": "NovoGrad"
+      },
+      "model": {
+        "name": "Unet",
+        "args": {
+          "num_classes": 2,
+          "nf_enc":"32,64,64,64",
+          "nf_dec":"64,64,64,64,64,32,32"
+        }
+      },
+      "pre_transforms": [
+        {
+          "name": "LoadNifti",
+          "args": {
+          "fields": ["image", "label"]
+          }
+        },
+        {
+          "name": "ConvertToChannelsFirst",
+          "args": {
+          "fields": ["image", "label"]
+          }
+        },
+        {
+        "name": "ScaleByResolution#ScaleImg",
+          "args": {
+            "fields": ["image"],
+            "target_resolution": [1.0,1.0,1.0]
+          }
+        },
+        {
+        "name": "ScaleByResolution#ScaleLb",
+          "args": {
+            "fields": ["label"],
+            "is_label": true,
+            "target_resolution": [1.0,1.0,1.0]
+          }
+        },
+        {
+          "name": "ScaleIntensityRange",
+          "args": {
+            "fields": "image",
+            "a_min": -57,
+            "a_max": 164,
+            "b_min": 0.0,
+            "b_max": 1.0,
+            "clip": true
+          }
+        },
+        {
+          "name": "FastCropByPosNegRatio",
+          "args": {
+            "size": [
+              96,
+              96,
+              96
+            ],
+            "fields": "image",
+            "label_field": "label",
+            "pos": 1,
+            "neg": 1,
+          "batch_size": 2,
+          "batches_to_gen_at_once": 48
+          }
+        },
+        {
+          "name": "ScaleIntensityOscillation",
+          "args": {
+            "fields": "image",
+            "magnitude": 0.10
+          }
+        }
+      ],
+    "batch_transforms": [
+      {
+        "name": "MergeBatchDims",
+        "args": {
+          "fields": ["image", "label"]
+        }
+      }
+    ],
+      "image_pipeline": {
+        "name": "SegmentationImagePipelineWithCache",
+        "args": {
+          "data_list_file_path": "{DATASET_JSON}",
+          "data_file_base_dir": "{DATA_ROOT}",
+          "data_list_key": "training",
+          "output_crop_size": [96, 96, 96],
+        "output_batch_size": 6,
+        "batched_by_transforms": false,
+          "num_workers": 4,
+          "prefetch_size": 8,
+          "num_cache_objects": 32,
+          "replace_percent": 0
+        }
+      }
+    },
+    "validate": {
+      "metrics": [
+      {"name": "ComputeAverageDice", "args": {"name": "val_mean_dice","is_key_metric": true, "field": "model","label_field": "label", "report_path": "{MMAR_EVAL_OUTPUT_PATH}"}}
+      ],
+      "pre_transforms": [
+        {
+         "ref": "LoadNifti"
+        },
+        {
+         "ref": "ConvertToChannelsFirst"
+        },
+        {
+         "ref": "ScaleImg"
+        },
+        {
+         "ref": "ScaleLb"
+        },
+      {
+         "ref": "ScaleIntensityRange"
+        }
+      ],
+      "image_pipeline": {
+        "name": "SegmentationImagePipelineWithCache",
+        "args": {
+          "data_list_file_path": "{DATASET_JSON}",
+          "data_file_base_dir": "{DATA_ROOT}",
+          "data_list_key": "validation",
+          "output_crop_size": [
+            96,
+            96,
+            96
+          ],
+        "output_batch_size": 1,
+        "num_workers": 4,
+        "prefetch_size": 8,
+         "num_cache_objects": 9,
+         "replace_percent": 0
+        }
+      },
+      "inferer": {
+        "name": "TFScanWindowInferer",
+        "args": {
+          "roi_size": [
+            96,
+            96,
+            96
+          ]
+        }
+      }
+    }
+  }
