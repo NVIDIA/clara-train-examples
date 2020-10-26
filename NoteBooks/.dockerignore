@@ -1,0 +1,19 @@
+# ignore .git and .cache folders
+.git
+.cache
+.ipynb_checkpoints
+_delete
+spleenData
+sampleData/CXR
+sampleData/imagesTr/spleen_8.npy
+
+AIAA/workspace
+AIAA/dicomSample/
+
+# Allow py file in dicomSample
+!AIAA/dicomSample/fixDicom.py
+
+tmp/*
+!tmp/readme.txt
+
+DomainExamples/_MyResearch
