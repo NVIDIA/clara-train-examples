@@ -1,0 +1,221 @@
+{
+  "epochs": 1,
+  "num_training_epoch_per_valid": 20,
+  "train_summary_recording_interval": 10,
+  "multi_gpu": false,
+  "learning_rate": 1e-3,
+  "use_amp": false,
+  "dynamic_input_shape": false,
+  "train": {
+    "loss": {
+      "name": "Dice",
+      "args": {
+        "squared_pred": true,
+        "is_onehot_targets": false,
+        "skip_background": true
+      }
+    },
+    "optimizer": {
+      "name": "Adam"
+    },
+    "aux_ops": [
+      {
+        "name": "DiceMaskedOutput",
+        "args": {
+        "skip_background": true,
+          "tags": [
+            "dice_tc"
+          ]
+        }
+      }
+    ],
+    "lr_policy": {
+      "name": "ReducePoly",
+      "args": {
+        "poly_power": 0.99
+      },
+      "search": [
+        {
+          "type": "enum",
+          "args": ["poly_power"],
+          "targets": [[0.9], [0.99]],
+          "domain": "lr"
+        }
+      ]
+    },
+    "model": {
+      "name": "SegResnet",
+      "args": {
+        "num_classes": 2,
+        "use_vae": false,
+        "blocks_down": "1,1,1",
+        "blocks_up": "1,1",
+        "init_filters": 2,
+        "use_group_norm": true,
+        "use_group_normG": 8,
+        "reg_weight": 1e-5,
+        "dropout_prob": 0.2,
+        "final_activation": "sigmoid"
+      },
+      "search": [
+        {
+          "type": "enum",
+          "args": ["init_filters"],
+          "targets": [[2],[4]],
+          "domain": "net"
+        },
+        {
+          "type": "enum",
+          "args": ["final_activation"],
+          "targets": [["softmax"],["sigmoid"]],
+          "domain": "net"
+      }
+      ]
+    },
+    "pre_transforms": [
+      {
+        "name": "LoadNifti",
+        "disabled": false,
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ConvertToChannelsFirst",
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ScaleByResolution#ScaleImg",
+        "args": {
+          "fields": ["image"],
+          "target_resolution": [1.0,1.0,1.0]
+        }
+      },
+      {
+        "name": "ScaleByResolution#ScaleLb",
+        "args": {
+          "fields": ["label"],
+          "is_label": true,
+          "target_resolution": [1.0,1.0,1.0]
+        }
+      },
+      {
+        "name": "ScaleIntensityRange",
+        "args": {
+          "fields": "image",
+          "a_min": -200,
+          "a_max": 200,
+          "b_min": 0.0,
+          "b_max": 1.0,
+          "clip": true
+        }
+      },
+      {
+        "name": "CropFixedSizeRandomCenter",
+        "args": {
+          "size": [64, 64, 64],
+          "fields": [
+            "image",
+            "label"
+          ]
+        }
+      },
+      {
+        "name": "RandomSpatialFlip",
+        "disabled": false,
+        "args": {
+          "fields": ["image", "label"]
+        }
+      },
+      {
+        "name": "ScaleShiftIntensity",
+        "disabled": false,
+        "args": {
+          "fields": "image",
+          "scale":0.1, "shift":0.1
+        }
+      },
+      {
+        "name": "ScaleIntensityOscillation",
+        "args": {
+          "fields": "image",
+          "magnitude": 0.10,
+          "probability": 0.1
+        }
+      },
+      {
+        "name": "AddGaussianNoise",
+        "args": {
+          "fields": "image",
+          "probability": 0.10
+        }
+      }
+    ],
+    "image_pipeline": {
+      "name": "SegmentationImagePipeline",
+      "args": {
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "training",
+        "output_crop_size": [64, 64, 64],
+        "output_batch_size": 4,
+        "batched_by_transforms": false,
+        "output_image_channels": 1,
+        "output_label_channels": 1,
+        "num_workers": 4,
+        "prefetch_size": 10
+      }
+    }
+  },
+  "validate": {
+    "metrics":
+    [
+        {
+            "name": "ComputeAverage",
+            "args": {
+              "name": "mean_dice_tc",
+              "is_key_metric": true,
+              "field": "dice_tc"
+            }
+        }
+    ],
+    "image_pipeline": {
+      "name": "SegmentationImagePipeline",
+      "args": {
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "validation",
+        "output_crop_size": [64, 64, 64],
+        "output_batch_size": 1,
+        "output_image_channels": 1,
+        "num_workers": 8,
+        "prefetch_size": 1
+      }
+    },
+    "pre_transforms": [
+       {
+         "ref": "LoadNifti"
+       },
+       {
+         "ref": "ConvertToChannelsFirst"
+       },
+       {
+         "ref": "ScaleImg"
+       },
+       {
+         "ref": "ScaleLb"
+       },
+       {
+         "ref": "ScaleIntensityRange"
+       },
+       {
+         "ref": "CropFixedSizeRandomCenter"
+       }
+    ],
+    "inferer": {
+      "name": "TFSimpleInferer"
+    }
+  }
+}

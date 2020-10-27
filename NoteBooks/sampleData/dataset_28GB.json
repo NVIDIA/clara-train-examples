@@ -1,0 +1,167 @@
+{
+    "description": "Sample fake data to show clara train sdk capabilities",
+    "training": [
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        }
+    ],
+    "validation": [
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        },
+        {
+            "image": "imagesTr/spleen_8.nii.gz",
+            "label": "labelsTr/spleen_8.nii.gz"
+        }
+    ]
+}
