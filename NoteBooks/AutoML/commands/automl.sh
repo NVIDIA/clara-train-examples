@@ -27,7 +27,5 @@ python -u -m nvmidl.apps.automl.train \
     traceout=console \
     ${additional_options}
 
-
 #    workers=0:1:2:3 \
 #    workers=0:0:0:0:0:0:0:0 \
-#    engTrace='hello.log' \
