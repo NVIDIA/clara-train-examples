@@ -53,8 +53,8 @@ class RandomController(Controller):
             sr = SearchResult(self.space, values)
             recommend = Recommendation(self.current_rec_id, sr)
             recommends.append(recommend)
-            # AEH TODO append another recommendation it will be sch automatically
-            # print("AEH values", values)
+            # TODO append another recommendation it will be sch automatically
+            # print(" values", values)
             self.current_rec_id = self.current_rec_id + 1
         return recommends
 
@@ -119,7 +119,7 @@ class MyHandler(Handler):
         print("job name {}".format(job_name))
         parms = ctx.get_prop(ContextKey.CONCRETE_SEARCH_VALUE)
         # mlflow.start_run()
-        mlflow.set_tracking_uri("/claraDevDay/AutoML/models/mlruns")
+        mlflow.set_tracking_uri("/claraDevDay/AutoML/mlruns")
         with self.update_lock:
             with mlflow.start_run() as run:
                 for k, v in parms.items():
