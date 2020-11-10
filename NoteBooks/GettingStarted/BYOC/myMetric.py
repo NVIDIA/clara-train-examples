@@ -1,3 +1,6 @@
+
+# SPDX-License-Identifier: Apache-2.0
+
 import numpy as np
 from ai4med.components.metric import Metric
 from ai4med.libs.metrics.metric_list import MetricList

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# SPDX-License-Identifier: Apache-2.0
+
 FILEID="1jzeNU1EKnK81PyTsrx0ujfNl-t0Jo8uE"
 FILNAME="Task09_Spleen.tar"
 DEST_DIR=/claraDevDay/spleenData

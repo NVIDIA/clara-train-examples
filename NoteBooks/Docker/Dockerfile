@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+
 FROM nvcr.io/nvidia/clara-train-sdk:v3.0
 
 RUN apt-get update && apt-get upgrade -y 

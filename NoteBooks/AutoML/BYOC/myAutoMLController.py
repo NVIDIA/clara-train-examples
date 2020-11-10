@@ -1,3 +1,6 @@
+
+# SPDX-License-Identifier: Apache-2.0
+
 from queue import PriorityQueue
 from random import randint, uniform
 

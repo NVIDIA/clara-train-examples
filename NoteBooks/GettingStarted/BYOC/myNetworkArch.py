@@ -1,3 +1,6 @@
+
+# SPDX-License-Identifier: Apache-2.0
+
 import tensorflow as tf
 from ai4med.components.models.model import Model
 import tensorflow.contrib.slim as slim
