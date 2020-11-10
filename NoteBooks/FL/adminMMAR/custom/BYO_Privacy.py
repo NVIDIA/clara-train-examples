@@ -1,4 +1,6 @@
 
+# SPDX-License-Identifier: Apache-2.0
+
 import logging
 from fed_learn.client.fed_privacy import PrivacyProtocol
 import numpy as np

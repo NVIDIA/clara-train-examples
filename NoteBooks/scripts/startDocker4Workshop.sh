@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# SPDX-License-Identifier: Apache-2.0
+
 # This script will:
 # 1 take an input = group number
 # 2 make a copy clara folder as claraDevDay_$GROUP_NO
@@ -7,7 +9,7 @@
 # user can open the jupyter lab at port 8890 + GROUP_NO
 # so group 3 will use dir  claraDevDay_3 on port 8893
 
-DOCKER_IMAGE=nvcr.io/nvidia/clara-train-sdk:v3.1
+DOCKER_IMAGE=nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v3.1.03  #EA image
 
 GROUP_NO=$1
 if [[ -z  $GROUP_NO ]]; then

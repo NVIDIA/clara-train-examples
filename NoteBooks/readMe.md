@@ -1,3 +1,5 @@
+<!--- SPDX-License-Identifier: Apache-2.0 -->
+
 # Notebooks for Clara Train SDK 
 
 This is a set of multiple notebooks which walks you through Clara train SDK features and capabilities.  

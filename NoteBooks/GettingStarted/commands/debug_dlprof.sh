@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+
 clear
 echo running cmd $0 $1 $2 $3
 CONFIG_FILE_NAME=$1

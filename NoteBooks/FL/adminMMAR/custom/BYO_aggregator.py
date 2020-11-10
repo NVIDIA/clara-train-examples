@@ -1,3 +1,6 @@
+
+# SPDX-License-Identifier: Apache-2.0
+
 import numpy as np
 
 from fed_learn.numproto import proto_to_ndarray, ndarray_to_proto

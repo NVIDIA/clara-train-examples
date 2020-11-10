@@ -1,3 +1,5 @@
+<!--- SPDX-License-Identifier: Apache-2.0 -->
+
 # Clara Train - Getting started with a Cloud Service Provider
 
 Researchers who do not have access to a local GPU workstation or server can easily get started with the Clara Train SDK using a GPU-enabled instance from a Cloud Service Provider (CSP).  The following services have been validated; other CSPs may be used with similar configurations:

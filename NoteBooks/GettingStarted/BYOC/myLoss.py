@@ -1,3 +1,6 @@
+
+# SPDX-License-Identifier: Apache-2.0
+
 import tensorflow as tf
 from ai4med.components.losses.loss import Loss
 
