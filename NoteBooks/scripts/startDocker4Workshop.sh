@@ -9,7 +9,7 @@
 # user can open the jupyter lab at port 8890 + GROUP_NO
 # so group 3 will use dir  claraDevDay_3 on port 8893
 
-DOCKER_IMAGE=nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v3.1.03  #EA image
+DOCKER_IMAGE=nvcr.io/nvidia/clara-train-sdk:v3.1
 
 GROUP_NO=$1
 if [[ -z  $GROUP_NO ]]; then
