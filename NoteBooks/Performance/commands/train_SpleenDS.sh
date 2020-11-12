@@ -42,6 +42,6 @@ echo ------------------------------------
     -c $CONFIG_FILE \
     -e $ENVIRONMENT_FILE \
     --set \
-    DATA_ROOT=/workspace/data/Task09_Spleen \
+    DATA_ROOT=/claraDevDay/spleenData/Task09_Spleen \
     DATASET_JSON=$MMAR_ROOT/config/dataset_original.json \
     MMAR_CKPT_DIR=$MMAR_CKPT_DIR )| tee $MMAR_ROOT/$MMAR_CKPT_DIR/$CONFIG_FILE_NAME.log
