@@ -42,6 +42,6 @@ python3 -u  -m nvmidl.apps.train \
     -c $CONFIG_FILE \
     -e $ENVIRONMENT_FILE \
     --set \
-    DATA_ROOT=$MMAR_ROOT/../../sampleData/ \
-    DATASET_JSON=$MMAR_ROOT/../../sampleData/dataset_28GB.json \
+    DATA_ROOT=$MMAR_ROOT/../sampleData/ \
+    DATASET_JSON=$MMAR_ROOT/../sampleData/dataset_28GB.json \
     MMAR_CKPT_DIR=$MMAR_CKPT_DIR
