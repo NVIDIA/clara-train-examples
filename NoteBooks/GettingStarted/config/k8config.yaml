@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
   - name: clarak8
-    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v3.0
+    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v3.1.01
     imagePullPolicy: Never
     command: ['sh', '-c', '/claraDevDay/GettingStarted/commands/train_W_Config.sh trn_base.json']
     resources:
