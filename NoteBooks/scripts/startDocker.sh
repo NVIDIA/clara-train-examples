@@ -2,8 +2,7 @@
 
 # SPDX-License-Identifier: Apache-2.0
 
-#DOCKER_IMAGE=nvcr.io/nvidia/clara-train-sdk:v3.0
-DOCKER_IMAGE=nvcr.io/nvidia/clara-train-sdk:v3.1
+DOCKER_IMAGE=nvcr.io/nvidia/clara-train-sdk:v3.1.01
 
 DOCKER_Run_Name=claradevday
 
