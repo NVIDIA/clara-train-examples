@@ -1,0 +1,47 @@
+# org is to describe each participant's organization
+# schema change: org is now mandatory
+
+# the name of this project
+name: Project1
+
+server:
+  org: nvidia
+
+  # set cn to the server's fully qualified domain name
+  cn: localhost
+
+  # replace the number with that all clients can reach out to, and that the server can open to listen to
+  fed_learn_port: 8002
+
+  # again, replace the number with that all clients can reach out to, and that the server can open to listen to
+  # the value must be different from fed_learn_port
+  admin_port: 8003
+
+  # admin_storage is the mmar upload folder name on the server
+  admin_storage: transfer
+
+  min_num_clients: 1
+  max_num_clients: 100
+
+
+fl_clients:
+  # client_name must be unique
+  - org: org1
+    client_name: client1
+  - org: org1
+    client_name: client2
+  - org: org2
+    client_name: client3
+  - org: Secure
+    client_name: client4
+
+admin_clients:
+  # email is the user name for admin authentication.  Hence, it must be unique within the project
+  - org: nvidia
+    email: admin@admin.com
+  - org: org1
+    email: leadIT@org1.com
+  - org: org2
+    email: siteresearcher@org2.com
+  - org: Secure
+    email: leadIT@secure.com
