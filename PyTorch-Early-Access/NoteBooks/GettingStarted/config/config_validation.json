@@ -1,0 +1,139 @@
+{
+  "use_gpu": true,
+  "multi_gpu": false,
+  "amp": true,
+  "model": {
+    "name": "UNet",
+    "args": {
+      "dimensions": 3,
+      "in_channels": 1,
+      "out_channels": 2,
+      "channels": [16, 32, 64, 128, 256],
+      "strides": [2, 2, 2, 2],
+      "num_res_units": 2,
+      "norm": "batch"
+    }
+  },
+  "pre_transforms": [
+    {
+      "name": "LoadNiftid",
+      "args": {
+        "keys": ["image", "label"]
+      }
+    },
+    {
+      "name": "AddChanneld",
+      "args": {
+        "keys": ["image", "label"]
+      }
+    },
+    {
+      "name": "ScaleIntensityRanged",
+      "args": {
+        "keys": "image",
+        "a_min": -57,
+        "a_max": 164,
+        "b_min": 0.0,
+        "b_max": 1.0,
+        "clip": true
+      }
+    },
+    {
+      "name": "CropForegroundd",
+      "args": {
+        "keys": ["image", "label"],
+        "source_key": "image"
+      }
+    },
+    {
+      "name": "ToTensord",
+      "args": {
+        "keys": ["image", "label"]
+      }
+    }
+  ],
+  "dataset": {
+    "name": "Dataset",
+    "data_list_file_path": "{DATASET_JSON}",
+    "data_file_base_dir": "{DATA_ROOT}",
+    "data_list_key": "validation"
+  },
+  "dataloader": {
+    "name": "DataLoader",
+    "args": {
+      "batch_size": 1,
+      "shuffle": false,
+      "num_workers": 4
+    }
+  },
+  "inferer": {
+    "name": "SlidingWindowInferer",
+    "args": {
+      "roi_size": [160, 160, 160],
+      "sw_batch_size": 4,
+      "overlap": 0.5
+    }
+  },
+  "handlers": [
+    {
+      "name": "StatsHandler",
+      "rank": 0,
+      "args": {
+        "output_transform": "lambda x: None"
+      }
+    },
+    {
+      "name": "CheckpointLoader",
+      "args": {
+        "load_path": "{MMAR_CKPT}"
+      }
+    },
+    {
+      "name": "SegmentationSaver",
+      "args": {
+        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}",
+        "batch_transform": "lambda x: x['image_meta_dict']",
+        "output_transform": "lambda x: x['pred']"
+      }
+    }
+  ],
+  "post_transforms": [
+    {
+      "name": "Activationsd",
+      "args": {
+        "keys": "pred",
+        "softmax": true
+      }
+    },
+    {
+      "name": "AsDiscreted",
+      "args": {
+        "keys": ["pred", "label"],
+        "argmax": [true, false],
+        "to_onehot": true,
+        "n_classes": 2
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "name": "MeanDice",
+      "log_label": "val_mean_dice",
+      "is_key_metric": true,
+      "args": {
+        "include_background": false,
+        "output_transform": "lambda x: (x['pred'], x['label'])"
+      }
+    },
+    {
+      "name": "Accuracy",
+      "log_label": "val_acc",
+      "args": {
+        "output_transform": "lambda x: (x['pred'], x['label'])"
+      }
+    }
+  ],
+  "evaluator": {
+    "name": "SupervisedEvaluator"
+  }
+}

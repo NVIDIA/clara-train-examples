@@ -1,0 +1,135 @@
+{
+  "version": "1.0",
+  "roles": {
+    "super": "super user of system",
+    "lead_researcher": "lead researcher of the study",
+    "site_researcher": "site researcher of the study",
+    "site_it": "site IT of the study",
+    "lead_it": "lead IT of the study",
+    "only4secure": "Not allowing any mmar upload"
+  },
+  "groups": {
+    "relaxed": {
+      "desc": "org group with relaxed policies",
+      "rules": {
+        "allow_byoc": true,
+        "allow_custom_datalist": true
+      }
+    },
+    "strict": {
+      "desc": "org group with strict policies",
+      "rules": {
+        "allow_byoc": false,
+        "allow_custom_datalist": false
+      }
+    },
+    "general": {
+      "desc": "general group user rights",
+      "role_rights": {
+        "super": {},
+        "lead_researcher": {
+          "train_all": true,
+          "view_all": true,
+          "deploy_self": true,
+          "deploy_all": true,
+          "operate_self": true,
+          "operate_all": true
+        },
+        "site_researcher": {
+          "train_self": true,
+          "view_self": true
+        },
+        "lead_it": {
+          "operate_all": true,
+          "view_all": true
+        },
+        "site_it": {
+          "operate_self": true,
+          "view_self": true
+        },
+        "only4secure": {
+          "upload_mmar": false,
+          "view_self": false
+        }
+      }
+    },
+    "Secure": {
+      "desc": "Not allowing mmar upload",
+      "role_rights": {
+        "super": {},
+        "lead_researcher": {
+          "upload_mmar": false,
+          "view_self": false
+        },
+        "site_researcher": {
+          "upload_mmar": false,
+          "view_self": false
+        },
+        "site_it": {
+          "upload_mmar": false,
+          "view_self": false
+        },
+        "lead_it": {
+          "upload_mmar": false,
+          "view_self": false
+        },
+        "only4secure": {
+          "train_self": true,
+          "operate_self": true,
+          "deploy_self": true
+        }
+      }
+    }
+  },
+  "users": {
+    "admin@admin.com": {
+      "org": "nvidia",
+      "roles": [
+        "super"
+      ]
+    },
+    "leadIT@org1.com": {
+      "org": "org1",
+      "roles": [
+        "lead_researcher"
+      ]
+    },
+    "siteresearcher@org2.com": {
+      "org": "org2",
+      "roles": [
+        "site_researcher"
+      ]
+    },
+    "leadIT@secure.com": {
+      "org": "Secure",
+      "roles": [
+        "only4secure"
+      ]
+    }
+  },
+  "orgs": {
+    "org1": [
+      "relaxed",
+      "general"
+    ],
+    "org2": [
+      "strict",
+      "general"
+    ],
+    "nvidia": [
+      "relaxed",
+      "general"
+    ],
+    "Secure": [
+      "relaxed",
+      "Secure"
+    ]
+  },
+  "sites": {
+    "server": "nvidia",
+    "client1": "org1",
+    "client2": "org1",
+    "client3": "org2",
+    "client4": "Secure"
+  }
+}
