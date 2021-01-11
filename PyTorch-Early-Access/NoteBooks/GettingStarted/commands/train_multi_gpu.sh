@@ -7,7 +7,7 @@ echo "MMAR_ROOT set to $MMAR_ROOT"
 additional_options="$*"
 
 # Data list containing all data
-CONFIG_FILE=config/config_train.json
+CONFIG_FILE=config/config_train_Unet.json
 ENVIRONMENT_FILE=config/environment.json
 
 python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 \
