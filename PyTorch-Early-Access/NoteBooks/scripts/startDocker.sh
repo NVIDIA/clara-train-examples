@@ -54,8 +54,6 @@ docker run --rm ${extraFlag} \
   --name=${DOCKER_Run_Name} \
   --gpus ${GPU_IDs} \
   -v ${PWD}/../:/claraDevDay/ \
-  -v /raid/users/aharouni/data/:/myData/ \
-  -v /raid/users/aharouni/code/PycharmUpload/ClaraDeployR5/:/ClaraDeployR5/ \
   -w /claraDevDay/scripts \
   --runtime=nvidia \
   --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \

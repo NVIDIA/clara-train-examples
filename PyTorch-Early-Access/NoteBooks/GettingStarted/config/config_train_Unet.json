@@ -121,9 +121,9 @@
       "data_file_base_dir": "{DATA_ROOT}",
       "data_list_key": "training",
       "args": {
-        "cache_num": 32,
+        "cache_num": 4,
         "cache_rate": 1.0,
-        "num_workers": 4
+        "num_workers": 2
       }
     },
     "dataloader": {
@@ -268,9 +268,9 @@
       "data_file_base_dir": "{DATA_ROOT}",
       "data_list_key": "validation",
       "args": {
-        "cache_num": 9,
+        "cache_num": 4,
         "cache_rate": 1.0,
-        "num_workers": 4
+        "num_workers": 2
       }
     },
     "dataloader": {

@@ -49,7 +49,8 @@ For example to run with 4 gpus on port `8890` and AIAA server on port `5000` run
 By default `./startDocker.sh` will use all gpu available and ports 8890 for notebooks and 5000 for AIAA 
 
 Now you should be inside the docker as see output similar to
-![side_bar](screenShots/startDocker.PNG)
+<br>
+<img src="screenShots/startDocker.png" alt="drawing" width="600"/>
 
 ## 3. Start jupyter lab 
 
@@ -75,7 +76,9 @@ This page shows all notebooks available as
 
 Before starting, we need to activate the GPU Dashboard. 
 Look at the left sidebar and click on `System Dashboards`. 
-![side_bar](screenShots/left_side_bar.png)
+<br>
+<img src="screenShots/left_side_bar.png" alt="drawing" width="300"/>
+
 
 Next, click on `GPU Utilization`, `GPU Memory`,`GPU Resources`, and `MachineResources`. 
 All of these will open in new tabs. 
@@ -84,7 +87,8 @@ It will dock the tab on top of the notebook.
 Follow the same procedure with `GPU Memory` tab and docker it on the bottom right of screen. 
 The result should be similar to
 
-![sd](screenShots/result.png)
+<br>
+<img src="screenShots/result.png" alt="drawing" width="600"/>
 
 Now we can see GPU Utilization and GPU Memory while we run through the notebooks.
 
@@ -99,5 +103,7 @@ we provide a couple of notebooks that all run from within the same docker.
     3. [Client Notebook](FL/Client.ipynb) 
     4. [Administration of FL experiment](FL/Admin.ipynb) 
     5. [Bring your own Component to FL](FL/Admin_BYOC.ipynb) Showing different privacy settings, BYO privacy and Aggregation
-1. [DeepGrow for AIAA](./AIAA/DeepGrow.ipynb)<br>
 1. [Download Decathlon Dataset](./Data/DownloadDecathlonDataSet.ipynb)<br>
+1. [DeepGrow for AIAA](./AIAA/DeepGrow.ipynb)<font color='red'> Coming soon </font>
+1. AutoML<font color='red'> Coming soon </font>
+
