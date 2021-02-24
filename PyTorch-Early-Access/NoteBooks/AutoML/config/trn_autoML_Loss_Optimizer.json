@@ -1,0 +1,350 @@
+{
+  "epochs": 1,
+  "use_gpu": true,
+  "multi_gpu": false,
+  "amp": true,
+  "num_interval_per_valid": 20,
+  "learning_rate": 2e-4,
+  "determinism": {
+    "random_seed": 0
+  },
+  "search": [
+    {
+      "domain": "transform",
+      "type": "enum",
+      "args": ["mySearchLoss1","mySearchLoss2"],
+      "targets": [[true,false],[false,true]]
+    },
+    {
+      "domain": "transform",
+      "type": "enum",
+      "args": ["mySearchOptimizer1","mySearchOptimizer2"],
+      "targets": [[true,false],[false,true]]
+    }
+  ],
+  "train": {
+    "loss":[
+      {
+      "apply": {"@disabled": "mySearchLoss1"},
+      "name": "DiceLoss",
+      "args": {
+        "to_onehot_y": true,
+        "softmax": true
+        }
+      },
+      {
+        "apply": {"@disabled": "mySearchLoss2"},
+        "name": "Focal",
+         "args": {
+          "skip_background": true
+          }
+    }]
+    ,
+    "optimizer": [
+      {
+      "name": "Adam",
+      "apply": {"@disabled": "mySearchOptimizer1"},
+      "args": {
+        "lr": 2e-4
+      }
+    },
+    {
+      "name": "NovoGrad",
+      "apply": {"@disabled": "mySearchOptimizer2"}
+    }
+    ],
+    "aux_ops": [
+      {
+        "name": "DiceMaskedOutput",
+        "args": {
+        "skip_background": true,
+          "tags": ["dice_tc"]
+        }
+      }
+    ],
+    "lr_scheduler": {
+      "name": "ReducePoly",
+      "args": {
+        "poly_power": 0.99
+      }
+    },
+    "model": {
+      "name": "UNet",
+      "args": {
+        "dimensions": 3,
+        "in_channels": 1,
+        "out_channels": 2,
+        "channels": [16, 32, 64, 128, 256],
+        "strides": [2, 2, 2, 2],
+        "num_res_units": 2,
+        "norm": "batch"
+      }
+    },
+    "pre_transforms": [
+      {
+        "name": "LoadImaged",
+        "args": {
+          "keys": ["image", "label"]
+        }
+      },
+      {
+        "name": "AddChanneld",
+        "args": {
+          "keys": ["image", "label"]
+        }
+      },
+      {
+        "name": "Spacingd",
+        "args": {
+            "keys": ["image", "label"],
+            "pixdim": [1.0, 1.0, 1.0],
+            "mode":["bilinear", "nearest"]
+        }
+      },
+      {
+        "name": "ScaleIntensityRanged",
+        "args": {
+          "keys": "image",
+          "a_min": -57,
+          "a_max": 164,
+          "b_min": 0.0,
+          "b_max": 1.0,
+          "clip": true
+        }
+      },
+      {
+        "name": "CropForegroundd",
+        "args": {
+          "keys": ["image", "label"],
+          "source_key": "image"
+        }
+      },
+      {
+        "name": "RandCropByPosNegLabeld",
+        "args": {
+          "keys": ["image", "label"],
+          "label_key": "label",
+          "spatial_size": [96, 96, 96],
+          "pos": 1,
+          "neg": 1,
+          "num_samples": 4,
+          "image_key": "image",
+          "image_threshold": 0
+        }
+      },
+      {
+        "name": "RandShiftIntensityd",
+        "args": {
+          "keys": "image",
+          "offsets": 0.1,
+          "prob": 0.5
+        }
+      },
+      {
+        "name": "ToTensord",
+        "args": {
+          "keys": ["image", "label"]
+        }
+      }
+    ],
+    "dataset": {
+      "name": "CacheDataset",
+        "data_list_file_path": "{DATASET_JSON}",
+        "data_file_base_dir": "{DATA_ROOT}",
+        "data_list_key": "training",
+      "args": {
+        "cache_num": 4,
+        "cache_rate": 1.0,
+        "num_workers": 2
+      }
+    },
+    "dataloader": {
+      "name": "DataLoader",
+      "args": {
+        "batch_size": 2,
+        "shuffle": true,
+        "num_workers": 2
+      }
+    },
+    "inferer": {
+      "name": "SimpleInferer"
+    },
+    "handlers": [
+      {
+        "name": "LrScheduleHandler",
+        "args": {
+          "print_lr": true
+        }
+      },
+      {
+        "name": "ValidationHandler",
+        "args": {
+          "interval": "{num_interval_per_valid}",
+          "epoch_level": true
+        }
+      },
+      {
+        "name": "CheckpointSaver",
+        "rank": 0,
+        "args": {
+          "save_dir": "{MMAR_CKPT_DIR}",
+          "save_dict": ["model", "optimizer", "lr_scheduler"],
+          "save_final": true,
+          "save_interval": 5
+        }
+      },
+      {
+        "name": "StatsHandler",
+        "rank": 0,
+        "args": {
+          "tag_name": "train_loss",
+          "output_transform": "lambda x: x['loss']"
+        }
+      },
+      {
+        "name": "TensorBoardStatsHandler",
+        "rank": 0,
+        "args": {
+          "log_dir": "{MMAR_CKPT_DIR}",
+          "tag_name": "train_loss",
+          "output_transform": "lambda x: x['loss']"
+        }
+      }
+    ],
+    "post_transforms": [
+      {
+        "name": "Activationsd",
+        "args": {
+          "keys": "pred",
+          "softmax": true
+        }
+      },
+      {
+        "name": "AsDiscreted",
+        "args": {
+          "keys": ["pred", "label"],
+          "argmax": [true, false],
+          "to_onehot": true,
+          "n_classes": 2
+        }
+      }
+    ],
+    "metrics": [
+      {
+        "name": "Accuracy",
+        "log_label": "train_acc",
+        "is_key_metric": true,
+        "args": {
+          "output_transform": "lambda x: (x['pred'], x['label'])"
+        }
+      }
+    ],
+    "trainer": {
+      "name": "SupervisedTrainer"
+    }
+  },
+  "validate": {
+    "pre_transforms": [
+       {
+        "ref": "LoadImaged"
+       },
+       {
+        "ref": "Spacingd"
+       },
+       {
+        "ref": "AddChanneld"
+       },
+       {
+        "ref": "ScaleIntensityRanged"
+       },
+       {
+        "ref": "CropForegroundd"
+       },
+      {
+        "ref": "ToTensord"
+      }
+    ],
+    "dataset": {
+      "name": "CacheDataset",
+      "data_list_file_path": "{DATASET_JSON}",
+      "data_file_base_dir": "{DATA_ROOT}",
+      "data_list_key": "validation",
+      "args": {
+        "cache_num": 4,
+        "cache_rate": 1.0,
+        "num_workers": 2
+      }
+    },
+    "dataloader": {
+      "name": "DataLoader",
+      "args": {
+        "batch_size": 1,
+        "shuffle": false,
+        "num_workers": 2
+      }
+    },
+    "inferer": {
+      "name": "SlidingWindowInferer",
+      "args": {
+        "roi_size": [160, 160, 160],
+        "sw_batch_size": 4,
+        "overlap": 0.5
+      }
+    },
+    "handlers": [
+      {
+        "name": "StatsHandler",
+        "rank": 0,
+        "args": {
+          "output_transform": "lambda x: None"
+        }
+      },
+      {
+        "name": "TensorBoardStatsHandler",
+        "rank": 0,
+        "args": {
+          "log_dir": "{MMAR_CKPT_DIR}",
+          "output_transform": "lambda x: None"
+        }
+      },
+      {
+        "name": "CheckpointSaver",
+        "rank": 0,
+        "args": {
+          "save_dir": "{MMAR_CKPT_DIR}",
+          "save_dict": ["model"],
+          "save_key_metric": true
+        }
+      }
+    ],
+    "post_transforms": [
+      {
+        "ref": "Activationsd"
+      },
+      {
+        "ref": "AsDiscreted"
+      }
+    ],
+    "metrics": [
+      {
+        "name": "MeanDice",
+        "log_label": "val_mean_dice",
+        "is_key_metric": true,
+        "args": {
+          "include_background": false,
+          "output_transform": "lambda x: (x['pred'], x['label'])"
+        }
+      },
+      {
+        "name": "Accuracy",
+        "log_label": "val_acc",
+        "args": {
+          "output_transform": "lambda x: (x['pred'], x['label'])"
+        }
+      }
+    ],
+    "evaluator": {
+      "name": "SupervisedEvaluator"
+    }
+  }
+}
