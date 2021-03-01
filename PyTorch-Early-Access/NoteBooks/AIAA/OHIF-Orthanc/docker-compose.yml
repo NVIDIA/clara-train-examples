@@ -28,7 +28,6 @@ services:
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./config/.htpasswd:/etc/nginx/conf.d/.htpasswd:ro
-#      - ./config/userpassword:/usr/share/nginx/html/userpassword_:ro
       - ./config/ohif_orthanc_default.js:/usr/share/nginx/html/app-config.js:ro
 #############################################################
   orthanc:
@@ -37,7 +36,7 @@ services:
     hostname: orthanc
     ports:
 #      - "3042:8042"  # already covered by nginx #mapped as http://<machinename>:ohifport/pacs/
-      - "3032:4242"   # no need AIAA can use <machinename>:ohifport/pacs/
+      - "3032:4242"   # mapped to <machinename>:ohifport/pacs/
     volumes:
       - ./config/orthanc.json:/etc/orthanc/orthanc.json:ro
       # Persist data 
