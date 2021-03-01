@@ -1,0 +1,8 @@
+{
+    "DATA_ROOT": "/",
+    "DATASET_JSON": "/claraDevDay/Data/tmp4Deepgrow_3DDataPrep/dataset-0.json",
+    "PROCESSING_TASK": "segmentation",
+    "MMAR_EVAL_OUTPUT_PATH": "eval",
+    "MMAR_CKPT_DIR": "models",
+    "MMAR_CKPT": "models/model.pt"
+}

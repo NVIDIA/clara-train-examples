@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "type": "pipeline",
+  "labels": [],
+  "description": "Using both deepgrow 3D and 2D models for better accuracy/results",
+  "pre_transforms": [
+    {
+      "name": "monai.transforms.LoadImaged",
+      "args": {
+        "keys": "image"
+      }
+    },
+    {
+      "name": "monai.transforms.AsChannelFirstd",
+      "args": {
+        "keys": "image"
+      }
+    },
+    {
+      "name": "monai.transforms.Spacingd",
+      "args": {
+        "keys": "image",
+        "pixdim": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mode": "bilinear"
+      }
+    }
+  ],
+  "post_transforms": [
+    {
+      "name": "aiaa.transforms.LargestCCd",
+      "args": {
+        "keys": "pred"
+      }
+    },
+    {
+      "name": "aiaa.apps.deepgrow.transforms.RestoreCroppedLabeld",
+      "args": {
+        "keys": "pred",
+        "ref_image": "image",
+        "mode": "nearest"
+      }
+    },
+    {
+      "name": "monai.transforms.AsChannelLastd",
+      "args": {
+        "keys": "pred"
+      }
+    },
+    {
+      "name": "aiaa.transforms.ExtremePointsd",
+      "args": {
+        "keys": "pred",
+        "result": "result",
+        "points": "points"
+      }
+    },
+    {
+      "name": "aiaa.transforms.BoundingBoxd",
+      "args": {
+        "keys": "pred",
+        "result": "result",
+        "bbox": "bbox"
+      }
+    }
+  ],
+  "inference": {
+    "name": "aiaa.apps.deepgrow.DeepgrowInferencePipeline",
+    "meta_data": {
+      "deepgrow": "3D"
+    },
+    "args": {
+      "models": [
+        "MySpleenDeepgrow_2D",
+        "MySpleenDeepgrow_3D"
+      ],
+      "batch_size": 32
+    }
+  },
+  "writer": {
+    "name": "aiaa.transforms.Writer",
+    "args": {
+      "image": "pred",
+      "json": "result"
+    }
+  }
+}
