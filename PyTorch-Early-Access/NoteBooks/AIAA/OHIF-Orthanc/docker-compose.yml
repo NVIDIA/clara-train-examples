@@ -2,26 +2,21 @@ version: "3.6"
 services:
   claratrain:
     container_name: claradevday-pt #claradevday-ohif
-    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0.ea2-2008-rc3
+    image: nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v4.0-EA2
     hostname: claratrain
     ports:
-      - "5000:5000" #mapped as http://<machinename>:ohifport/aiaa/
-      - "8899:8888" #mapped as http://<machinename>:ohifport/notebooks/
+      - "3031:5000" #mapped as http://<machinename>:ohifport/aiaa/
+#      - "8899:8888" #mapped as http://<machinename>:ohifport/notebooks/
+    ipc: host
     volumes:
-      - ../../../:/claraDevDay/
-    command: "jupyter lab /claraDevDay --ip 0.0.0.0 --allow-root --no-browser"
-#    command: "jupyter lab /claraDevDay --ip 0.0.0.0 --allow-root --no-browser --config /claraDevDay/AIAA/OHIF/orthanc/config/jupyter_notebook_config.py"
-#    command: "/bin/bash"
-#    stdin_open: true # docker run -i
-#    tty: true        # docker run -t
+      - ../../:/claraDevDay/
+    command: "jupyter lab /claraDevDay --ip 0.0.0.0 --allow-root --no-browser --config /claraDevDay/AIAA/OHIF-Orthanc/config/jupyter_notebook_config.py"
 #############################################################
   ohif:
     container_name: aiaa-ohif-orthanc
     build:
-      # Project root
-      context: ./docker/
-      # Relative to context
-      dockerfile: ./Dockerfile
+      context: ./docker/         # Project root
+      dockerfile: ./Dockerfile   # Relative to context
     logging:
       driver: json-file
       options:
@@ -32,6 +27,8 @@ services:
       - "3030:80"
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./config/.htpasswd:/etc/nginx/conf.d/.htpasswd:ro
+#      - ./config/userpassword:/usr/share/nginx/html/userpassword_:ro
       - ./config/ohif_orthanc_default.js:/usr/share/nginx/html/app-config.js:ro
 #############################################################
   orthanc:
@@ -40,10 +37,10 @@ services:
     hostname: orthanc
     ports:
 #      - "3042:8042"  # already covered by nginx #mapped as http://<machinename>:ohifport/pacs/
-      - "3043:4242"
+      - "3032:4242"   # no need AIAA can use <machinename>:ohifport/pacs/
     volumes:
       - ./config/orthanc.json:/etc/orthanc/orthanc.json:ro
       # Persist data 
-      - /raid/users/aharouni/dockers/orthanc/orthanc-db/:/var/lib/orthanc/db/
-      #- ${ConfigLocalPath}/orthanc-db/:/var/lib/orthanc/db/
+      #- /raid/users/aharouni/dockers/orthanc/orthanc-db/:/var/lib/orthanc/db/
+      - ${ConfigLocalPath}/orthanc-db/:/var/lib/orthanc/db/
     command: "/etc/orthanc --verbose"

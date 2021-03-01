@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "type": "deepgrow",
+  "labels": [],
+  "description": "3D DeepGrow model based on Unet",
+  "pre_transforms": [
+    {
+      "name": "monai.transforms.LoadImaged",
+      "args": {
+        "keys": "image"
+      }
+    },
+    {
+      "name": "monai.transforms.AsChannelFirstd",
+      "args": {
+        "keys": "image"
+      }
+    },
+    {
+      "name": "monai.transforms.Spacingd",
+      "args": {
+        "keys": "image",
+        "pixdim": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mode": "bilinear"
+      }
+    },
+    {
+      "name": "aiaa.apps.deepgrow.transforms.AddGuidanceFromPointsd",
+      "args": {
+        "ref_image": "image",
+        "guidance": "guidance",
+        "dimensions": 3
+      }
+    },
+    {
+      "name": "monai.transforms.AddChanneld",
+      "args": {
+        "keys": "image"
+      }
+    },
+    {
+      "name": "aiaa.apps.deepgrow.transforms.SpatialCropGuidanced",
+      "args": {
+        "keys": "image",
+        "guidance": "guidance",
+        "spatial_size": [
+          192,
+          192
+        ]
+      }
+    },
+    {
+      "name": "monai.transforms.Resized",
+      "args": {
+        "keys": "image",
+        "spatial_size": [
+          128,
+          192,
+          192
+        ],
+        "mode": "area"
+      }
+    },
+    {
+      "name": "aiaa.apps.deepgrow.transforms.ResizeGuidanced",
+      "args": {
+        "guidance": "guidance",
+        "ref_image": "image"
+      }
+    },
+    {
+      "name": "monai.transforms.NormalizeIntensityd",
+      "args": {
+        "keys": "image",
+        "subtrahend": 208,
+        "divisor": 388
+      }
+    },
+    {
+      "name": "aiaa.apps.deepgrow.transforms.AddGuidanceSignald",
+      "args": {
+        "image": "image",
+        "guidance": "guidance"
+      }
+    }
+  ],
+  "post_transforms": [
+    {
+      "name": "monai.transforms.Activationsd",
+      "args": {
+        "keys": "pred",
+        "sigmoid": true
+      }
+    },
+    {
+      "name": "monai.transforms.AsDiscreted",
+      "args": {
+        "keys": "pred",
+        "threshold_values": true,
+        "logit_thresh": 0.5
+      }
+    },
+    {
+      "name": "monai.transforms.ToNumpyd",
+      "args": {
+        "keys": "pred"
+      }
+    },
+    {
+      "name": "aiaa.apps.deepgrow.transforms.RestoreCroppedLabeld",
+      "args": {
+        "keys": "pred",
+        "ref_image": "image",
+        "mode": "nearest"
+      }
+    },
+    {
+      "name": "monai.transforms.AsChannelLastd",
+      "args": {
+        "keys": "pred"
+      }
+    }
+  ],
+  "inference": {
+    "name": "aiaa.inference.TritonInference",
+    "input": "image",
+    "output": "pred",
+    "meta_data": {
+      "deepgrow": "3D"
+    },
+    "args": {
+      "scanning_window": false
+    }
+  },
+  "writer": {
+    "name": "aiaa.transforms.Writer",
+    "args": {
+      "image": "pred",
+      "json": "result"
+    }
+  },
+  "triton": {
+    "platform": "pytorch_libtorch",
+    "max_batch_size": 1,
+    "input": [
+      {
+        "name": "INPUT__0",
+        "data_type": "TYPE_FP32",
+        "dims": [
+          3,
+          128,
+          192,
+          192
+        ]
+      }
+    ],
+    "output": [
+      {
+        "name": "OUTPUT__0",
+        "data_type": "TYPE_FP32",
+        "dims": [
+          1,
+          128,
+          192,
+          192
+        ]
+      }
+    ]
+  }
+}

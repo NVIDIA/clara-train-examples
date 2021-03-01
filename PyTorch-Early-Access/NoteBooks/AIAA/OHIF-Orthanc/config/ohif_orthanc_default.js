@@ -9,9 +9,9 @@ window.config = {
       dicomWeb: [
         {
           name: 'ORTHANC',
-          wadoUriRoot: 'http://clarasa-station:3030/pacs/wado',
-          qidoRoot: 'http://clarasa-station:3030/pacs/dicom-web',
-          wadoRoot: 'http://clarasa-station:3030/pacs/dicom-web',
+          wadoUriRoot: '/pacs/wado',
+          qidoRoot: '/pacs/dicom-web',
+          wadoRoot: '/pacs/dicom-web',
           qidoSupportsIncludeField: true,
           imageRendering: 'wadors',
           thumbnailRendering: 'wadors',

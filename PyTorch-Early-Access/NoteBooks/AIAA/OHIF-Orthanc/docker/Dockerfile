@@ -21,7 +21,8 @@
 
 # Stage 1: Build the application
 # docker build -t ohif/viewer:latest .
-FROM node:11.2.0-slim as builder
+#FROM node:11.2.0-slim as builder
+FROM node:12.20.2-slim as builder
 
 RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
@@ -50,7 +51,7 @@ RUN git clone https://github.com/SachidanandAlle/Viewers.git .
 # Run the install before copying the rest of the files
 RUN yarn config set workspaces-experimental true
 # AEH needed line below to upgrade yarn to 1.22 instead of 1.12 error
-RUN yarn global add yarn
+#RUN yarn global add yarn
 
 RUN yarn install
 
