@@ -2,7 +2,8 @@
 
 # SPDX-License-Identifier: Apache-2.0
 
-DOCKER_IMAGE=nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0.ea-1
+DOCKER_IMAGE=nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v4.0-EA1
+DOCKER_IMAGE=nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v4.0-EA2
 
 DOCKER_Run_Name=claradevday-pt
 
@@ -41,7 +42,7 @@ echo -----------------------------------
 extraFlag="-it "
 cmd2run="/bin/bash"
 
-extraFlag=${extraFlag}" -p "${jnotebookPort}":8890 -p "${AIAA_PORT}":80"
+extraFlag=${extraFlag}" -p "${jnotebookPort}":8890 -p "${AIAA_PORT}":5000"
 #extraFlag=${extraFlag}" -p "${jnotebookPort}":8890 -p 443:443 -p 5000:5000 -p 5005:5005 -p 5006:5006 "
 #extraFlag=${extraFlag}" --net=host "
 #extraFlag=${extraFlag}" -u $(id -u):$(id -g) -v /etc/passwd:/etc/passwd -v /etc/group:/etc/group "
@@ -49,14 +50,14 @@ extraFlag=${extraFlag}" -p "${jnotebookPort}":8890 -p "${AIAA_PORT}":80"
 echo starting please run "./installDashBoardInDocker.sh" to install the lab extensions then start the jupeter lab
 echo once completed use web browser with token given yourip:${jnotebookPort} to access it
 
-
+  #--shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \
 docker run --rm ${extraFlag} \
   --name=${DOCKER_Run_Name} \
   --gpus ${GPU_IDs} \
   -v ${PWD}/../:/claraDevDay/ \
   -w /claraDevDay/scripts \
   --runtime=nvidia \
-  --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \
+  --ipc=host \
   ${DOCKER_IMAGE} \
   ${cmd2run}
 
