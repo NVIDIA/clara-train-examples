@@ -1,0 +1,106 @@
+{
+  "use_gpu": true,
+  "multi_gpu": false,
+  "amp": true,
+  "model": {
+    "ts_path": "{MMAR_TORCHSCRIPT}"
+  },
+  "pre_transforms": [
+    {
+      "name": "CastToTypeD",
+      "args": {
+        "keys": "image",
+        "dtype": "float32"
+      }
+    },
+    {
+      "name": "ScaleIntensityRangeD",
+      "args": {
+        "keys": "image",
+        "a_min": 0.0,
+        "a_max": 255.0,
+        "b_min": -1.0,
+        "b_max": 1.0
+      }
+    },
+    {
+      "name": "ToTensorD",
+      "args": {
+        "keys": [
+          "image",
+          "label"
+        ]
+      }
+    }
+  ],
+  "dataset": {
+    "path": "datasets.PatchWSIDataset",
+    "data_list_file_path": "{DATASET_JSON}",
+    "data_file_base_dir": "{DATA_ROOT}",
+    "data_list_key": "validation",
+    "args": {
+      "region_size": 768,
+      "grid_size": 3,
+      "patch_size": 224
+    }
+  },
+  "dataloader": {
+    "name": "DataLoader",
+    "args": {
+      "batch_size": 64,
+      "shuffle": false,
+      "num_workers": 12
+    }
+  },
+  "inferer": {
+    "name": "SimpleInferer"
+  },
+  "handlers": [
+    {
+      "name": "StatsHandler",
+      "rank": 0,
+      "args": {
+        "iteration_print_logger": "lambda engine: print(f'iter: {engine.state.iteration}/{engine.state.epoch_length}') if engine.state.iteration % 10 == 0 else None",
+        "output_transform": "lambda x: None"
+      }
+    },
+    {
+      "name": "MetricsSaver",
+      "args": {
+        "save_dir": "{MMAR_EVAL_OUTPUT_PATH}",
+        "metrics": ["val_acc"],
+        "save_rank": 0
+      }
+    }
+
+  ],
+  "post_transforms": [
+    {
+      "name": "ActivationsD",
+      "args": {
+        "keys": "pred",
+        "sigmoid": true
+      }
+    },
+    {
+      "name": "AsDiscreteD",
+      "args": {
+        "keys": "pred",
+        "threshold_values": true
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "name": "Accuracy",
+      "log_label": "val_acc",
+      "is_key_metric": true,
+      "args": {
+        "output_transform": "lambda x: (x['pred'], x['label'])"
+      }
+    }
+  ],
+  "evaluator": {
+    "name": "SupervisedEvaluator"
+  }
+}
