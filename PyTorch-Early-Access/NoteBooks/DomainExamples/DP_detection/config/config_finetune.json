@@ -1,0 +1,330 @@
+{
+  "epochs": 4,
+  "num_interval_per_valid": 1,
+  "learning_rate": 1e-3,
+  "use_gpu": true,
+  "multi_gpu": false,
+  "amp": true,
+  "determinism": {
+    "random_seed": 0
+  },
+  "train": {
+    "loss": {
+      "name": "BCEWithLogitsLoss"
+    },
+    "optimizer": {
+      "name": "Novograd",
+      "args": {
+        "lr": "{learning_rate}"
+      }
+    },
+    "lr_scheduler": {
+      "name": "CosineAnnealingLR",
+      "args": {
+        "T_max": "{epochs}"
+      }
+    },
+    "model": {
+      "path": "models.TorchModelFullyConv",
+      "args": {
+        "model_name": "resnet18",
+        "n_classes": 1,
+        "pretrained": true
+      }
+    },
+    "pre_transforms": [
+      {
+        "name": "ToTensorD",
+        "args": {
+          "keys": "image"
+        }
+      },
+      {
+        "name": "TorchVisiond",
+        "args": {
+          "keys": "image",
+          "name": "ColorJitter",
+          "brightness": 0.25,
+          "contrast": 0.75,
+          "saturation": 0.25,
+          "hue": 0.04
+        }
+      },
+      {
+        "name": "ToNumpyd",
+        "args": {
+          "keys": "image"
+        }
+      },
+      {
+        "name": "RandFlipD",
+        "args": {
+          "keys": "image",
+          "prob": 0.5
+        }
+      },
+      {
+        "name": "RandRotate90D",
+        "args": {
+          "keys": "image",
+          "prob": 0.5
+        }
+      },
+      {
+        "name": "CastToTypeD",
+        "args": {
+          "keys": [
+            "image",
+            "label"
+          ],
+          "dtype": "float32"
+        }
+      },
+      {
+        "name": "RandZoomD",
+        "args": {
+          "keys": "image",
+          "prob": 0.5,
+          "min_zoom": 0.9,
+          "max_zoom": 1.1
+        }
+      },
+      {
+        "name": "ScaleIntensityRangeD",
+        "args": {
+          "keys": "image",
+          "a_min": 0.0,
+          "a_max": 255.0,
+          "b_min": -1.0,
+          "b_max": 1.0
+        }
+      },
+      {
+        "name": "ToTensorD",
+        "args": {
+          "keys": [
+            "image",
+            "label"
+          ]
+        }
+      }
+    ],
+    "dataset": {
+      "path": "datasets.PatchWSIDataset",
+      "data_list_file_path": "{DATASET_JSON}",
+      "data_file_base_dir": "{DATA_ROOT}",
+      "data_list_key": "training",
+      "args": {
+        "region_size": 768,
+        "grid_size": 3,
+        "patch_size": 224
+      }
+    },
+    "dataloader": {
+      "name": "DataLoader",
+      "args": {
+        "batch_size": 64,
+        "shuffle": false,
+        "num_workers": 12
+      }
+    },
+    "inferer": {
+      "name": "SimpleInferer"
+    },
+    "handlers": [
+      {
+        "name": "CheckpointLoader",
+        "args": {
+          "load_path": "{MMAR_CKPT}",
+          "load_dict": ["model"]
+        }
+      },
+      {
+        "name": "LrScheduleHandler",
+        "args": {
+          "print_lr": true
+        }
+      },
+      {
+        "name": "ValidationHandler",
+        "args": {
+          "interval": "{num_interval_per_valid}",
+          "epoch_level": true
+        }
+      },
+      {
+        "name": "CheckpointSaver",
+        "rank": 0,
+        "args": {
+          "save_dir": "{MMAR_CKPT_DIR}",
+          "save_dict": [
+            "model",
+            "optimizer",
+            "lr_scheduler"
+          ],
+          "save_final": true,
+          "save_interval": 1,
+          "epoch_level": true
+        }
+      },
+      {
+        "name": "StatsHandler",
+        "rank": 0,
+        "args": {
+          "tag_name": "train_loss",
+          "output_transform": "lambda x: x['loss']"
+        }
+      },
+      {
+        "name": "TensorBoardStatsHandler",
+        "rank": 0,
+        "args": {
+          "log_dir": "{MMAR_CKPT_DIR}",
+          "tag_name": "train_loss",
+          "output_transform": "lambda x: x['loss']"
+        }
+      }
+    ],
+    "post_transforms": [
+      {
+        "name": "ActivationsD",
+        "args": {
+          "keys": "pred",
+          "sigmoid": true
+        }
+      },
+      {
+        "name": "AsDiscreteD",
+        "args": {
+          "keys": "pred",
+          "threshold_values": true
+        }
+      }
+    ],
+    "metrics": [
+      {
+        "name": "Accuracy",
+        "log_label": "train_acc",
+        "is_key_metric": true,
+        "args": {
+          "output_transform": "lambda x: (x['pred'], x['label'])"
+        }
+      }
+    ],
+    "trainer": {
+      "name": "SupervisedTrainer",
+      "args": {
+        "max_epochs": "{epochs}"
+      }
+    }
+  },
+  "validate": {
+    "pre_transforms": [
+      {
+        "name": "CastToTypeD",
+        "args": {
+          "keys": "image",
+          "dtype": "float32"
+        }
+      },
+      {
+        "name": "ScaleIntensityRangeD",
+        "args": {
+          "keys": "image",
+          "a_min": 0.0,
+          "a_max": 255.0,
+          "b_min": -1.0,
+          "b_max": 1.0
+        }
+      },
+      {
+        "name": "ToTensorD",
+        "args": {
+          "keys": [
+            "image",
+            "label"
+          ]
+        }
+      }
+    ],
+    "dataset": {
+      "path": "datasets.PatchWSIDataset",
+      "data_list_file_path": "{DATASET_JSON}",
+      "data_file_base_dir": "{DATA_ROOT}",
+      "data_list_key": "validation",
+      "args": {
+        "region_size": 768,
+        "grid_size": 3,
+        "patch_size": 224
+      }
+    },
+    "dataloader": {
+      "name": "DataLoader",
+      "args": {
+        "batch_size": 64,
+        "shuffle": false,
+        "num_workers": 12
+      }
+    },
+    "inferer": {
+      "name": "SimpleInferer"
+    },
+    "handlers": [
+      {
+        "name": "StatsHandler",
+        "rank": 0,
+        "args": {
+          "output_transform": "lambda x: None"
+        }
+      },
+      {
+        "name": "TensorBoardStatsHandler",
+        "rank": 0,
+        "args": {
+          "log_dir": "{MMAR_CKPT_DIR}",
+          "output_transform": "lambda x: None"
+        }
+      },
+      {
+        "name": "CheckpointSaver",
+        "rank": 0,
+        "args": {
+          "save_dir": "{MMAR_CKPT_DIR}",
+          "save_dict": [
+            "model"
+          ],
+          "save_key_metric": true
+        }
+      }
+    ],
+    "post_transforms": [
+      {
+        "name": "ActivationsD",
+        "args": {
+          "keys": "pred",
+          "sigmoid": true
+        }
+      },
+      {
+        "name": "AsDiscreteD",
+        "args": {
+          "keys": "pred",
+          "threshold_values": true
+        }
+      }
+    ],
+    "metrics": [
+      {
+        "name": "Accuracy",
+        "log_label": "val_acc",
+        "is_key_metric": true,
+        "args": {
+          "output_transform": "lambda x: (x['pred'], x['label'])"
+        }
+      }
+    ],
+    "evaluator": {
+      "name": "SupervisedEvaluator"
+    }
+  }
+}
