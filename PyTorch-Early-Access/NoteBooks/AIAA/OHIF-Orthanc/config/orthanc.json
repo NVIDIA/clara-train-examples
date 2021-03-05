@@ -24,8 +24,8 @@
   "JpipTransferSyntaxAccepted": true,
   "Mpeg2TransferSyntaxAccepted": true,
   "RleTransferSyntaxAccepted": true,
-  "UnknownSopClassAccepted": false,
-  "DicomScpTimeout": 30,
+  "UnknownSopClassAccepted": true,
+  "DicomScpTimeout": 60,
 
   "RemoteAccessAllowed": true,
   "SslEnabled": false,
@@ -36,15 +36,18 @@
     "test": "test"
   },
   "DicomModalities": {
-       "Xnat" : [ "XNAT", "10.110.20.153", 8104 ]
+       "PYNETDICOM" : [ "PYNETDICOM", "*", 104 ]
   },
   "DicomModalitiesInDatabase": false,
   "DicomAlwaysAllowEcho": true,
   "DicomAlwaysAllowStore": true,
+  "DicomAlwaysAllowFind" : true,
+  "DicomAlwaysAllowGet" : true,
+  "DicomTlsEnabled" : false,
   "DicomCheckModalityHost": false,
   "DicomScuTimeout": 10,
   "OrthancPeers": {
-      "XNAT" : [ "http://10.110.20.153:8104/" ]
+      "Test" : [ "http://127.0.0.1:9999/" ]
   },
   "OrthancPeersInDatabase": false,
   "HttpProxy": "",
@@ -52,7 +55,7 @@
   "HttpVerbose": true,
 
   "HttpTimeout": 10,
-  "HttpsVerifyPeers": true,
+  "HttpsVerifyPeers": false,
   "HttpsCACertificates": "",
   "UserMetadata": {},
   "UserContentType": {},

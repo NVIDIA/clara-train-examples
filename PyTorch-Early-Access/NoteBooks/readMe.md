@@ -21,7 +21,7 @@ There are multiple notebooks showing:
     3. [OHIF](AIAA/AIAAwOHIF.ipynb)
 3. DataSets
     1. [Download Decathlon Dataset](Data/DownloadDecathlonDataSet.ipynb)<br>
-    2. [Download from National Cancer Archive](Data/_del_tcia-master_fullCode/TCIADownloader.ipynb)<br>
+    2. [Download from National Cancer Archive](Data/TCIA/TCIADownloader.ipynb)<br>
 4. Federated Learning <br>
     1. [Federated learning](FL/FederatedLearning.ipynb) 
     2. [Provisioning Notebook](FL/Provisioning.ipynb) 
@@ -31,10 +31,7 @@ There are multiple notebooks showing:
 5. AutoML
     1. [AutoML Basics](AutoML/AutoML.ipynb)
     1. <del>[AutoML BYOC](AutoML/AutoML_BYOC.ipynb)</del>
-6. Digital pathology
-    1. [Train with openslide](DomainExamples/DP_detection_openSlide/DPwOpenSlide.ipynb)
-    1. openslide vs nvidiaLib 
-    1. Train with nvidiaLib
+6. [Digital pathology](DomainExamples/DP_detection/DP.ipynb)
 7. Integration 
     1. <del>[End to End workflow](DomainExamples/End2End/End2End.ipynb)</del>
     2. <del>[Train to Deploy](DomainExamples/Train2Deploy/Train2Deploy.ipynb)</del>

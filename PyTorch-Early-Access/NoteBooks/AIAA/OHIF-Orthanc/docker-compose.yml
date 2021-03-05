@@ -1,11 +1,11 @@
 version: "3.6"
 services:
   claratrain:
-    container_name: claradevday-pt #claradevday-ohif
+    container_name: claradevday-pt
     image: nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v4.0-EA2
     hostname: claratrain
-    ports:
-      - "3031:5000" #mapped as http://<machinename>:ohifport/aiaa/
+#    ports:
+#      - "3031:5000" #mapped as http://<machinename>:ohifport/aiaa/
 #      - "8899:8888" #mapped as http://<machinename>:ohifport/notebooks/
     ipc: host
     volumes:
@@ -26,20 +26,22 @@ services:
     ports:
       - "3030:80"
     volumes:
-      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./config/.htpasswd:/etc/nginx/conf.d/.htpasswd:ro
       - ./config/ohif_orthanc_default.js:/usr/share/nginx/html/app-config.js:ro
+      #- ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./config/nginxWPassword.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./config/.htpasswd:/etc/nginx/conf.d/.htpasswd:ro
 #############################################################
   orthanc:
-    image: jodogne/orthanc-plugins
+    image: jodogne/orthanc-plugins:1.9.1
     container_name: aiaa-orthanc
     hostname: orthanc
-    ports:
+#    ports:
 #      - "3042:8042"  # already covered by nginx #mapped as http://<machinename>:ohifport/pacs/
-      - "3032:4242"   # mapped to <machinename>:ohifport/pacs/
+#      - "3032:4242"  # we use hostname-orthanc internally to connect and get dicom images
     volumes:
       - ./config/orthanc.json:/etc/orthanc/orthanc.json:ro
-      # Persist data 
+      #- ./config/orthancSachi.json:/etc/orthanc/orthanc.json:ro
+      # Persist data
       #- /raid/users/aharouni/dockers/orthanc/orthanc-db/:/var/lib/orthanc/db/
       - ${ConfigLocalPath}/orthanc-db/:/var/lib/orthanc/db/
     command: "/etc/orthanc --verbose"

@@ -118,6 +118,7 @@
         "region_size": 768,
         "grid_size": 3,
         "patch_size": 224,
+        "image_reader_name": "cuclaraimage",
         "cache_num": 4000,
         "replace_rate": 0.5,
         "num_init_workers": 4,
@@ -241,14 +242,15 @@
       }
     ],
     "dataset": {
-      "name": "PatchWSIDataset",
+      "path": "datasets.PatchWSIDataset",
       "data_list_file_path": "{DATASET_JSON}",
       "data_file_base_dir": "{DATA_ROOT}",
       "data_list_key": "validation",
       "args": {
         "region_size": 768,
         "grid_size": 3,
-        "patch_size": 224
+        "patch_size": 224,
+        "image_reader_name": "cuclaraimage"
       }
     },
     "dataloader": {
