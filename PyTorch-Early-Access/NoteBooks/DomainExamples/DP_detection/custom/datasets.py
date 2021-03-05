@@ -26,7 +26,6 @@ class PatchWSIDataset(Dataset):
         self.patch_size = patch_size
 
         self.transform = transform
-        print("AEH debug",data[0])
         self.image_base_path = data[0]["image"]
         self.samples = self.load_samples(data[0]["label"])
         self.image_path_list = {x[0] for x in self.samples}

@@ -7,7 +7,7 @@ import fileIO
 import numpy as np
 from time import sleep
 import json
-from src import create_csv_db
+#from src import create_csv_db
 
 LOGGING_LEVEL = logging.INFO
 # LOGGING_LEVEL=logging.DEBUG
@@ -126,6 +126,32 @@ def readSegMetaJson(filePath, lbKeyDic):
         file2IdDic[ id + ".nii.gz"] = lbKeyDic[lbDesc]
     return file2IdDic
 
+# adjusted from src to return a list
+def extract_dcm_metadata_to_csv(folder: Path, n_jobs, filter_slice=True, filter_series=True):
+    from joblib import Parallel, delayed
+    import pandas as pd
+    from src.filters import keep_slice, small_series
+    from src.create_csv_db import dcm_file_to_flat_dict, merge_series
+
+    folder = folder.expanduser().resolve()
+    files = folder.rglob("*.dcm")
+    with Parallel(n_jobs=n_jobs) as parallel:
+        list_of_metadata_dict = parallel(delayed(dcm_file_to_flat_dict)(file) for file in files)
+        if filter_slice:
+            indexer = parallel(delayed(keep_slice)(slice_) for slice_ in list_of_metadata_dict)
+            list_of_metadata_dict = [x for x, y in zip(list_of_metadata_dict, indexer) if y]
+    metadatas_group_by_series_acq_number = merge_series(list_of_metadata_dict)
+    final_list_of_mdatas = []
+    for unique_series, series_slices in metadatas_group_by_series_acq_number.items():
+        if filter_series and small_series(series_slices):
+            continue
+        else:
+            final_list_of_mdatas.extend(series_slices)
+
+    df = pd.DataFrame.from_records(final_list_of_mdatas)
+    df.to_csv(folder / "metadatas.csv", index=False)
+
+    return final_list_of_mdatas
 
 def main():
     # filePath="/claraDevDay/Data/tcia_downloader-master/test_NSCLC/1/"
@@ -136,7 +162,7 @@ def main():
     # mergeMultipleNiftis(file2IdDic)
     # return
     parser = argparse.ArgumentParser()
-    parser.add_argument("source", help="the root folder where to recursively search and analyse dicom filess")
+    parser.add_argument("source", help="the root folder where to recursively search and analyse dicom files")
     parser.add_argument("--jobs", "-j", help="Number of workers to use", default=4, type=int)
     parser.add_argument("--filter_small_series", help="filter series with less than 25 slices in it", action="store_true")
     parser.add_argument("--filter_slices", help="keep only CT,MR,AC PT,RTSTRUC and SEG, original acquisition only", default=True,action="store_true")
@@ -150,7 +176,8 @@ def main():
     if args.dicomConvert:
         convertDcm2nii(args.source,args.outputDir)
     else:
-        final_list_of_mdatas = create_csv_db.extract_dcm_metadata_to_csv(Path(args.source), args.jobs, args.filter_slices, args.filter_small_series)
+        #final_list_of_mdatas = create_csv_db.extract_dcm_metadata_to_csv(Path(args.source), args.jobs, args.filter_slices, args.filter_small_series)
+        final_list_of_mdatas = extract_dcm_metadata_to_csv(Path(args.source), args.jobs, args.filter_slices, args.filter_small_series)
         covertAllSeg2Nifti(final_list_of_mdatas, args.outputDir,args.flipAxis)
 
 
