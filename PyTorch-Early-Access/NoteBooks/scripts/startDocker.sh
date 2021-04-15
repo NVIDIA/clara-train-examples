@@ -2,8 +2,8 @@
 
 # SPDX-License-Identifier: Apache-2.0
 
-DOCKER_IMAGE=nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v4.0-EA1
 DOCKER_IMAGE=nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v4.0-EA2
+DOCKER_IMAGE=nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-21-02-qa4
 
 DOCKER_Run_Name=claradevday-pt
 
@@ -42,8 +42,8 @@ echo -----------------------------------
 extraFlag="-it "
 cmd2run="/bin/bash"
 
-extraFlag=${extraFlag}" -p "${jnotebookPort}":8890 -p "${AIAA_PORT}":5000"
-#extraFlag=${extraFlag}" -p "${jnotebookPort}":8890 -p 443:443 -p 5000:5000 -p 5005:5005 -p 5006:5006 "
+extraFlag=${extraFlag}" -p "${jnotebookPort}":8888 -p "${AIAA_PORT}":5000"
+#extraFlag=${extraFlag}" -p "${jnotebookPort}":8888 -p 443:443 -p 5000:5000 -p 5005:5005 -p 5006:5006 "
 #extraFlag=${extraFlag}" --net=host "
 #extraFlag=${extraFlag}" -u $(id -u):$(id -g) -v /etc/passwd:/etc/passwd -v /etc/group:/etc/group "
 

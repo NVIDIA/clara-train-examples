@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: Apache-2.0
+
+version: "3.8"
+services:
+  claratrain:
+    container_name: claradevday-pt
+    hostname: claratrain
+    ##### to build image with GPU dashboard
+#    build:
+#      context: ./docker/         # Project root
+#      dockerfile: ./Dockerfile   # Relative to context
+    #image: clara-train-nvdashboard:v4.0-qa6
+#    image: clara-train-nvdashboard:v4.0-qa6-5
+    ##### only
+    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa6-5
+    depends_on:
+      - tritonserver
+    ports:
+      - "3030:8888"  # Jupyter lab port
+      - "3031:5000"  # AIAA port
+    ipc: host
+    volumes:
+      - ${TRAIN_DEV_DAY_ROOT}:/claraDevDay/
+    command: "jupyter lab /claraDevDay --ip 0.0.0.0 --allow-root --no-browser --config /claraDevDay/scripts/jupyter_notebook_config.py"
+#    command: tail -f /dev/null
+#    tty: true
+#############################################################
+  tritonserver:
+    image: nvcr.io/nvidia/tritonserver:21.02-py3
+    container_name: aiaa-triton
+    hostname: tritonserver
+    restart: unless-stopped
+    command: >
+      sh -c "chmod 777 /triton_models &&
+        /opt/tritonserver/bin/tritonserver \
+          --model-store /triton_models \
+          --model-control-mode="poll" \
+          --repository-poll-secs=5 \
+          --log-verbose ${TRITON_VERBOSE}"
+    volumes:
+      - ${TRAIN_DEV_DAY_ROOT}/AIAA/workspace/triton_models:/triton_models
+#    shm_size: 1gb
+#    ulimits:
+#      memlock: -1
+#      stack: 67108864
+#    logging:
+#      driver: json-file
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [ gpu ]
+              # To specify certain GPU uncomment line below
+              #device_ids: ['0,1']
