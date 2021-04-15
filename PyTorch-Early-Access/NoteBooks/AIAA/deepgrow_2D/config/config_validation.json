@@ -2,22 +2,31 @@
   "use_gpu": true,
   "multi_gpu": false,
   "amp": false,
-  "model": {
-    "name": "BasicUnet",
-    "args": {
-      "dimensions": 2,
-      "in_channels": 3,
-      "out_channels": 1,
-      "features": [
-        32,
-        64,
-        128,
-        256,
-        512,
-        32
-      ]
+  "dont_load_ts_model": false,
+  "dont_load_ckpt_model": true,
+  "model": [
+    {
+      "ts_path": "{MMAR_TORCHSCRIPT}",
+      "disabled": "{dont_load_ts_model}"
+    },
+    {
+      "name": "BasicUnet",
+      "disabled": "{dont_load_ckpt_model}",
+      "args": {
+        "dimensions": 2,
+        "in_channels": 3,
+        "out_channels": 1,
+        "features": [
+          32,
+          64,
+          128,
+          256,
+          512,
+          32
+        ]
+      }
     }
-  },
+  ],
   "pre_transforms": [
     {
       "name": "LoadImaged",
@@ -39,7 +48,7 @@
     },
     {
       "name": "SpatialCropForegroundd",
-      "path": "deepgrow.transforms.SpatialCropForegroundd",
+      "path": "monai.apps.deepgrow.transforms.SpatialCropForegroundd",
       "args": {
         "keys": [
           "image",
@@ -78,16 +87,8 @@
       }
     },
     {
-      "name": "FindAllValidSlicesd",
-      "path": "deepgrow.transforms.FindAllValidSlicesd",
-      "args": {
-        "label": "label",
-        "sids": "sids"
-      }
-    },
-    {
       "name": "AddInitialSeedPointd",
-      "path": "deepgrow.transforms.AddInitialSeedPointd",
+      "path": "monai.apps.deepgrow.transforms.AddInitialSeedPointd",
       "args": {
         "label": "label",
         "guidance": "guidance",
@@ -96,7 +97,7 @@
     },
     {
       "name": "AddGuidanceSignald",
-      "path": "deepgrow.transforms.AddGuidanceSignald",
+      "path": "monai.apps.deepgrow.transforms.AddGuidanceSignald",
       "args": {
         "image": "image",
         "guidance": "guidance"
@@ -130,8 +131,8 @@
     "name": "SimpleInferer"
   },
   "iteration": {
-    "name": "Interaction",
-    "path": "deepgrow.interaction.Interaction",
+    "name": "ClickInteraction",
+    "path": "deepgrow.interaction.ClickInteraction",
     "args": {
       "max_interactions": 5,
       "key_probability": "probability",
@@ -159,7 +160,7 @@
         },
         {
           "name": "FindDiscrepancyRegionsd",
-          "path": "deepgrow.transforms.FindDiscrepancyRegionsd",
+          "path": "monai.apps.deepgrow.transforms.FindDiscrepancyRegionsd",
           "args": {
             "label": "label",
             "pred": "pred",
@@ -169,7 +170,7 @@
         },
         {
           "name": "AddRandomGuidanced",
-          "path": "deepgrow.transforms.AddRandomGuidanced",
+          "path": "monai.apps.deepgrow.transforms.AddRandomGuidanced",
           "args": {
             "guidance": "guidance",
             "discrepancy": "discrepancy",
@@ -179,7 +180,7 @@
         },
         {
           "name": "AddGuidanceSignald",
-          "path": "deepgrow.transforms.AddGuidanceSignald",
+          "path": "monai.apps.deepgrow.transforms.AddGuidanceSignald",
           "args": {
             "image": "image",
             "guidance": "guidance",
@@ -202,6 +203,14 @@
   },
   "handlers": [
     {
+      "name": "CheckpointLoader",
+      "disabled": "{dont_load_ckpt_model}",
+      "args": {
+        "load_path": "{MMAR_CKPT}",
+        "load_dict": ["model"]
+      }
+    },
+    {
       "name": "StatsHandler",
       "rank": 0,
       "args": {
@@ -214,12 +223,6 @@
       "args": {
         "log_dir": "{MMAR_EVAL_OUTPUT_PATH}",
         "output_transform": "lambda x: None"
-      }
-    },
-    {
-      "name": "CheckpointLoader",
-      "args": {
-        "load_path": "{MMAR_CKPT}"
       }
     },
     {
@@ -236,6 +239,21 @@
       "args": {
         "log_dir": "{MMAR_EVAL_OUTPUT_PATH}",
         "tag_name": "val_dice"
+      }
+    },
+    {
+      "name": "MetricsSaver",
+      "args": {
+        "save_dir": "{MMAR_EVAL_OUTPUT_PATH}",
+        "metrics": [
+          "val_dice"
+        ],
+        "metric_details": [
+          "val_dice"
+        ],
+        "batch_transform": "lambda x: x['image_meta_dict']",
+        "summary_ops": "*",
+        "save_rank": 0
       }
     }
   ],

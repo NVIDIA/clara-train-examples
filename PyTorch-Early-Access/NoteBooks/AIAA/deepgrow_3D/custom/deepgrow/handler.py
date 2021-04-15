@@ -1,4 +1,4 @@
-# Copyright 2020 MONAI Consortium
+# Copyright 2020 - 2021 MONAI Consortium
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -31,10 +31,7 @@ Image, _ = optional_import("PIL.Image")
 ImageDraw, _ = optional_import("PIL.ImageDraw")
 
 
-# TODO:: Unit Test
-
-
-class MeanDice:
+class RegionDice:
     def __init__(self):
         self.data = []
 
@@ -201,7 +198,7 @@ class DeepgrowStatsHandler:
 
             if self.compute_metric:
                 if self.metric_data.get(region) is None:
-                    self.metric_data[region] = MeanDice()
+                    self.metric_data[region] = RegionDice()
                 self.metric_data[region].update(
                     y_pred=output_data["pred"][bidx].to(device), y=batch_data["label"][bidx].to(device), batched=False
                 )

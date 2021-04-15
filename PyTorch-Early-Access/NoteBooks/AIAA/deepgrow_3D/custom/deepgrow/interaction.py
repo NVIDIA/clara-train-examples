@@ -1,4 +1,4 @@
-# Copyright 2020 MONAI Consortium
+# Copyright 2020 - 2021 MONAI Consortium
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -9,18 +9,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import importlib
-from typing import Dict
 
-import torch
-
-from monai.engines.utils import CommonKeys
-from monai.engines.workflow import Engine, Events
+from monai.apps.deepgrow.interaction import Interaction
 from monai.transforms import Compose
 
-# TODO:: Unit Test
 
-
-class Interaction:
+class ClickInteraction(Interaction):
     """
     Deepgrow Training/Evaluation iteration method with interactions (simulation of clicks) support for image and label.
 
@@ -40,7 +34,7 @@ class Interaction:
 
         if not isinstance(self.transforms, Compose):
             transforms = []
-            for t in transforms:
+            for t in self.transforms:
                 transforms.append(self.init_external_class(t))
             self.transforms = Compose(transforms)
 
@@ -53,30 +47,3 @@ class Interaction:
         m = importlib.import_module(module_name)
         c = getattr(m, class_name)
         return c(**class_args) if class_args else c()
-
-    def attach(self, engine: Engine) -> None:
-        engine.add_event_handler(Events.ITERATION_STARTED, self)
-
-    def __call__(self, engine: Engine, batchdata: Dict[str, torch.Tensor]):
-        if batchdata is None:
-            raise ValueError("Must provide batch data for current iteration.")
-
-        for j in range(self.max_interactions):
-            inputs, _ = engine.prepare_batch(batchdata)
-            inputs = inputs.to(engine.state.device)
-
-            engine.network.eval()
-            with torch.no_grad():
-                if engine.amp:
-                    with torch.cuda.amp.autocast():
-                        predictions = engine.inferer(inputs, engine.network)
-                else:
-                    predictions = engine.inferer(inputs, engine.network)
-
-            batchdata.update({CommonKeys.PRED: predictions})
-            batchdata[self.key_probability] = torch.as_tensor(
-                ([1.0 - ((1.0 / self.max_interactions) * j)] if self.train else [1.0]) * len(inputs)
-            )
-            batchdata = self.transforms(batchdata)
-
-        return engine._iteration(engine, batchdata)
