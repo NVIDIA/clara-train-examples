@@ -1,83 +1,52 @@
 {
-    "servers": [
-        {
-            "name": "spleen_segmentation",
-            "ssl_private_key": "resources/certs/server.key",
-            "ssl_cert": "resources/certs/server.crt",
-            "ssl_root_cert": "resources/certs/rootCA.pem",
-            "min_num_clients": 2,
-            "max_num_clients": 100,
-            "wait_after_min_clients": 10,
-            "heart_beat_timeout": 600,
-            "start_round": 0,
-            "num_rounds": 2,
-            "exclude_vars": "dummy",
-            "num_server_workers": 100,
-            "validate_on_server": false,
-            "num_rounds_per_valid": 1,
-          "compression": "Gzip"
-        }
-    ],
-    "aggregator":
-      {
-        "name": "ModelAggregator",
-        "args": {
-          "exclude_vars": "dummy",
-          "aggregation_weights":
-              {
-                "client1": 1,
-                "client2": 1.5,
-                "client3": 0.8
-              }
-        }
-      },
-    "pre_processors": [
-      {
-        "name": "ModelEncryptor",
-        "args": {}
-      },
-      {
-        "name": "DataCompressor",
-        "args": {}
-      }
-    ],
-    "post_processors": [
-      {
-        "name": "DataDeCompressor",
-        "args": {}
-      },
-      {
-        "name": "ModelDecryptor",
-        "args": {}
-      }
-    ],
-    "model_saver":
+  "format_version": 1,
+  "servers": [
     {
-        "name": "PTModelSaver",
+      "name": "spleen_segmentation",
+      "min_num_clients": 2,
+      "max_num_clients": 100,
+      "wait_after_min_clients": 10,
+      "heart_beat_timeout": 600,
+      "start_round": 0,
+      "num_rounds": 2
+    }
+  ],
+  "aggregator":
+    {
+      "name": "InTimeAccumulateWeightedAggregator",
+      "args": {
+      }
+    },
+  "outbound_filters": [
+  ],
+  "inbound_filters": [
+  ],
+  "model_persistor":
+  {
+    "name": "PTFileModelPersistor",
+    "args": {
+      "exclude_vars": "dummy",
+      "model": {
+        "path": "monai.networks.nets.unet.UNet",
         "args": {
-          "exclude_vars": "dummy"
+          "dimensions": 3,
+          "in_channels": 1,
+          "out_channels": 2,
+          "channels": [16, 32, 64, 128, 256],
+          "strides": [2, 2, 2, 2],
+          "num_res_units": 2,
+          "norm": "batch"
         }
-    },
-    "server_trainer": {
-        "name": "ServerTrainer"
-    },
-    "admin_cmd_modules": [
-      {
-        "name": "TrainingCommandModule"
-      },
-      {
-        "name": "ValidationCommandModule"
-      },
-      {
-        "name": "ShellCommandModule"
-      },
-      {
-        "name": "SystemCommandModule"
       }
-    ],
-    "result_processors": [
-      {
-        "name": "ValidateResultProcessor"
-      }
-    ]
+    }
+  },
+  "shareable_generator": {
+    "name": "FullModelShareableGenerator"
+  },
+  "handlers": [
+    {
+      "path": "flare.components.handlers.intime_model_selection_handler.IntimeModelSelectionHandler",
+      "args": {}
+    }
+  ]
 }

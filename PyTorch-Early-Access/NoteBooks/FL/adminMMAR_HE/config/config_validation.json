@@ -33,11 +33,11 @@
         "name": "EnsureChannelFirstd",
       "args": {
           "keys": ["image", "label"]
-        }
-      },
-      {
+      }
+    },
+    {
         "name": "Spacingd",
-        "args": {
+      "args": {
             "keys": ["image", "label"],
             "pixdim": [1.0, 1.0, 1.0],
             "mode":["bilinear", "nearest"]

@@ -1,97 +1,48 @@
 {
+  "format_version": 1,
     "servers": [
         {
-            "name": "spleen_segmentation",
-            "service": {}
+          "name": "spleen_segmentation"
         }
     ],
     "client": {
-        "local_epochs": 5,
-        "steps_aggregation": 0,
-        "exclude_vars": "dummy",
-        "cross_site_validate": true,
-        "privacy": {
-        },
-        "pre_processors": [
-          {
-              "name": "IteratorNumberGenerator",
-              "args": {
-                  "field": "n_iter"
-              }
-          },
-          {
-              "name": "BestMetricGenerator",
-              "args": {
-                  "field": "best_validation_metric"
-              }
-          },
-          {
-            "name": "ModelEncryptor",
-            "args": {}
-          },
-          {
-            "name": "DataCompressor",
-            "args": {}
+      "outbound_filters": [
+        {
+          "path": "medl.apps.fed_learn.client.metadata_generator.IteratorNumberGenerator",
+          "args": {
+              "field": "n_iter"
           }
-        ],
-        "post_processors": [
-          {
-            "name": "DataDeCompressor",
-            "args": {}
-          },
-          {
-            "name": "ModelDecryptor",
-            "args": {}
-          }
-        ],
-
-        "req_processors": [
-          {
-            "name": "StartClientProcessor"
-          },
-          {
-            "name": "ClientStatusProcessor"
-          },
-          {
-            "name": "AbortClientProcessor"
-          },
-          {
-            "name": "ShutdownClientProcessor"
-          },
-          {
-            "name": "DeployProcessor"
-          },
-          {
-            "name": "ValidateRequestProcessor"
-          },
-          {
-            "name": "ShellCommandProcessor"
-          },
-          {
-            "name": "DeleteRunNumberProcessor"
-          },
-          {
-            "name": "SysInfoProcessor"
-          },
-          {
-            "name": "RestartClientProcessor"
-          },
-          {
-            "name": "StartClientMGpuProcessor"
-          }
-        ],
-        "model_reader_writer": {
-            "name": "PTModelReaderWriter"
         },
-        "model_validator": {
-        },
-        "retry_timeout": 30,
-        "ssl_private_key": "resources/certs/client1.key",
-        "ssl_cert": "resources/certs/client1.crt",
-        "ssl_root_cert": "resources/certs/rootCA.pem",
-        "compression": "Gzip"
+        {
+            "path": "medl.apps.fed_learn.client.metadata_generator.BestMetricGenerator",
+            "args": {
+                "field": "best_validation_metric"
+            }
+        }
+      ],
+      "inbound_filters": [
+      ]
     },
-        "client_trainer": {
-            "name": "ClientTrainer"
+  "client_trainer": {
+    "path": "medl.apps.fed_learn.trainers.client_trainer.ClientTrainer",
+    "args": {
+      "local_epochs": 2,
+      "steps_aggregation": 0,
+      "model_reader_writer": {
+          "name": "PTModelReaderWriter"
+      }
     }
+  },
+  "handlers": [
+  ],
+  "cross_validate": true,
+  "cross_site_validation": {
+      "is_participating": true,
+      "model_validator": {
+          "path": "medl.apps.fed_learn.validators.client_validator.ClientValidator",
+          "args": {}
+      },
+      "inbound_filters": [],
+      "outbound_filters": []
+  }
 }

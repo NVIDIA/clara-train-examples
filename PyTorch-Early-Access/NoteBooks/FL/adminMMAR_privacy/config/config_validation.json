@@ -1,16 +1,8 @@
 {
   "multi_gpu": false,
   "amp": true,
-  "dont_load_ts_model": false,
-  "dont_load_ckpt_model": true,
-  "model": [
-    {
-      "ts_path": "{MMAR_TORCHSCRIPT}",
-      "disabled": "{dont_load_ts_model}"
-    },
-    {
+  "model": {
     "name": "UNet",
-    "disabled": "{dont_load_ckpt_model}",
     "args": {
       "dimensions": 3,
       "in_channels": 1,
@@ -20,27 +12,24 @@
       "num_res_units": 2,
       "norm": "batch"
     }
-    }
-  ],
+  },
   "pre_transforms": [
     {
-        "name": "LoadImaged",
+      "name": "LoadNiftid",
       "args": {
-          "keys": ["image", "label"]
+        "keys": [
+          "image",
+          "label"
+        ]
       }
     },
     {
-        "name": "EnsureChannelFirstd",
+      "name": "AddChanneld",
       "args": {
-          "keys": ["image", "label"]
-        }
-      },
-      {
-        "name": "Spacingd",
-        "args": {
-            "keys": ["image", "label"],
-            "pixdim": [1.0, 1.0, 1.0],
-            "mode":["bilinear", "nearest"]
+        "keys": [
+          "image",
+          "label"
+        ]
       }
     },
     {
@@ -57,14 +46,20 @@
     {
       "name": "CropForegroundd",
       "args": {
-          "keys": ["image", "label"],
+        "keys": [
+          "image",
+          "label"
+        ],
         "source_key": "image"
       }
     },
     {
       "name": "ToTensord",
       "args": {
-          "keys": ["image", "label"]
+        "keys": [
+          "image",
+          "label"
+        ]
       }
     }
   ],
@@ -85,20 +80,16 @@
   "inferer": {
     "name": "SlidingWindowInferer",
     "args": {
-      "roi_size": [160, 160, 160],
+      "roi_size": [
+        160,
+        160,
+        160
+      ],
       "sw_batch_size": 4,
       "overlap": 0.5
     }
   },
   "handlers": [
-    {
-      "name": "CheckpointLoader",
-      "disabled": "{dont_load_ckpt_model}",
-      "args": {
-        "load_path": "{MMAR_CKPT}",
-        "load_dict": ["model"]
-      }
-    },
     {
       "name": "StatsHandler",
       "rank": 0,
@@ -107,22 +98,17 @@
       }
     },
     {
+      "name": "CheckpointLoader",
+      "args": {
+        "load_path": "{MMAR_CKPT}"
+      }
+    },
+    {
       "name": "SegmentationSaver",
       "args": {
         "output_dir": "{MMAR_EVAL_OUTPUT_PATH}",
         "batch_transform": "lambda x: x['image_meta_dict']",
         "output_transform": "lambda x: x['pred']"
-      }
-    },
-    {
-      "name": "MetricsSaver",
-      "args": {
-        "save_dir": "{MMAR_EVAL_OUTPUT_PATH}",
-        "metrics": ["val_mean_dice", "val_acc"],
-        "metric_details": ["val_mean_dice"],
-        "batch_transform": "lambda x: x['image_meta_dict']",
-        "summary_ops": "*",
-        "save_rank": 0
       }
     }
   ],
