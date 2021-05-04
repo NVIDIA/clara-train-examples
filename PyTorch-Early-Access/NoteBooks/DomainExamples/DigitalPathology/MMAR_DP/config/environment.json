@@ -1,0 +1,9 @@
+{
+    "DATA_ROOT": "/claraDevDay/Data/DP_CAMELYON16/",
+    "DATASET_JSON": "/claraDevDay/Data/DP_CAMELYON16/datalist.json",
+    "PROCESSING_TASK": "classification",
+    "MMAR_EVAL_OUTPUT_PATH": "eval",
+    "MMAR_CKPT_DIR": "models/",
+    "MMAR_CKPT": "models/model.pt",
+    "MMAR_TORCHSCRIPT": "models/model.ts"
+}

@@ -1,11 +1,15 @@
 {
-  "epochs": 10,
-  "use_gpu": true,
+  "epochs": 2,
   "multi_gpu": false,
   "amp": true,
+  "num_interval_per_valid": 1,
+  "learning_rate": 2e-4,
+  "tf32": false,
   "determinism": {
     "random_seed": 0
   },
+  "cudnn_benchmark": false,
+  "dont_load_ckpt_model": true,
   "train": {
     "loss": {
       "name": "DiceLoss",
@@ -17,7 +21,7 @@
     "optimizer": {
       "name": "Adam",
       "args": {
-        "lr": 2e-4
+        "lr": "{learning_rate}"
       }
     },
     "lr_scheduler": {
@@ -41,21 +45,15 @@
     },
     "pre_transforms": [
       {
-        "name": "LoadNiftid",
+        "name": "LoadImaged",
         "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
+          "keys": ["image", "label"]
         }
       },
       {
-        "name": "AddChanneld",
+        "name": "EnsureChannelFirstd",
         "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
+          "keys": ["image", "label"]
         }
       },
       {
@@ -80,10 +78,7 @@
       {
         "name": "CropForegroundd",
         "args": {
-          "keys": [
-            "image",
-            "label"
-          ],
+          "keys": ["image", "label"],
           "source_key": "image"
         }
       },
@@ -139,6 +134,14 @@
     },
     "handlers": [
       {
+        "name": "CheckpointLoader",
+        "disabled": "{dont_load_ckpt_model}",
+        "args": {
+          "load_path": "{MMAR_CKPT}",
+          "load_dict": ["model"]
+        }
+      },
+      {
         "name": "LrScheduleHandler",
         "args": {
           "print_lr": true
@@ -147,7 +150,7 @@
       {
         "name": "ValidationHandler",
         "args": {
-          "interval": 5,
+          "interval": "{num_interval_per_valid}",
           "epoch_level": true
         }
       },
@@ -208,58 +211,31 @@
       }
     ],
     "trainer": {
-      "name": "SupervisedTrainer"
+      "name": "SupervisedTrainer",
+      "args": {
+        "max_epochs": "{epochs}"
+      }
     }
   },
   "validate": {
     "pre_transforms": [
       {
-        "name": "LoadNiftid",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "LoadImaged"
       },
       {
-        "name": "AddChanneld",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "Spacingd"
       },
       {
-        "name": "ScaleIntensityRanged",
-        "args": {
-          "keys": "image",
-          "a_min": -57,
-          "a_max": 164,
-          "b_min": 0.0,
-          "b_max": 1.0,
-          "clip": true
-        }
+        "ref": "EnsureChannelFirstd"
       },
       {
-        "name": "CropForegroundd",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ],
-          "source_key": "image"
-        }
+        "ref": "ScaleIntensityRanged"
       },
       {
-        "name": "ToTensord",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "CropForegroundd"
+      },
+      {
+        "ref": "ToTensord"
       }
     ],
     "dataset": {
@@ -317,20 +293,10 @@
     ],
     "post_transforms": [
       {
-        "name": "Activationsd",
-        "args": {
-          "keys": "pred",
-          "softmax": true
-        }
+        "ref": "Activationsd"
       },
       {
-        "name": "AsDiscreted",
-        "args": {
-          "keys": ["pred", "label"],
-          "argmax": [true, false],
-          "to_onehot": true,
-          "n_classes": 2
-        }
+        "ref": "AsDiscreted"
       }
     ],
     "metrics": [

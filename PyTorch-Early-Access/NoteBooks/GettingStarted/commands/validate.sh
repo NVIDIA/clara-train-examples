@@ -6,6 +6,7 @@ clear
 echo running cmd $0 $1 $2 $3
 CONFIG_FILE_NAME=config_train_Unet.json  # need to pass different names
 GPU2USE=$1
+#DATASET_JSON=$2
 
 my_dir="$(dirname "$0")"
 . $my_dir/set_env.sh
@@ -22,15 +23,15 @@ if [[ -z  $GPU2USE  ]] ;then
 fi
 export CUDA_VISIBLE_DEVICES=$GPU2USE
 echo ------------------------------------
-
-MMAR_CKPT=models/${CONFIG_FILE_NAME::-5}/model.pt #remove .json from file name
+#MMAR_CKPT=models/${CONFIG_FILE_NAME::-5}/model.pt #remove .json from file name
+MMAR_TORCHSCRIPT=models/${CONFIG_FILE_NAME::-5}/model.ts #remove .json from file name
 
 python3 -u  -m medl.apps.evaluate \
     -m $MMAR_ROOT \
     -c $CONFIG_FILE \
     -e $ENVIRONMENT_FILE \
     --set \
-    MMAR_CKPT=$MMAR_CKPT \
+    MMAR_TORCHSCRIPT=$MMAR_TORCHSCRIPT \
     print_conf=True \
     use_gpu=True \
     multi_gpu=False

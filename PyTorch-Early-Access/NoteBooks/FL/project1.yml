@@ -3,6 +3,16 @@
 
 # the name of this project
 name: Project1
+config_folder: config
+
+# homomorphic encryption
+he:
+  lib: tenseal
+  config:
+    poly_modulus_degree: 8192
+    coeff_mod_bit_sizes: [60, 40, 40]
+    scale_bits: 40
+    scheme: CKKS
 
 server:
   org: nvidia
@@ -20,9 +30,11 @@ server:
   # admin_storage is the mmar upload folder name on the server
   admin_storage: transfer
 
-  min_num_clients: 1
+  min_num_clients: 2
   max_num_clients: 100
 
+  # generate authorization.json
+  auth: true
 
 fl_clients:
   # client_name must be unique

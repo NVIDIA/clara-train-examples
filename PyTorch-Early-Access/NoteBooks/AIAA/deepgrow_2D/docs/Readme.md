@@ -8,7 +8,7 @@ The training data is from the MICCAI 2015 Challenge: Multi-Atlas Labeling Beyond
 
 The data must be converted to 1mm x 1mm resolution before training
 
-Run `python3 prepare_dataset.py --help` from *MMAR/custom/deepgrow* folder to know more options to prepare the dataset for training
+Run `sh prepare_dataset.sh --help` from *MMAR/commands folder to know more options to prepare the dataset for training
 
 ## Training Configuration
 The current training configuration apart from traditional deep learning hyper-parameters is set for 15 click interactions for both training and validation. Click interactions define how many positive and negative clicks are provided for the additional feature maps in simulation before a single step/iteration is taken for the deep learning model for a batch of images. Single and multi-GPU training options are available. 

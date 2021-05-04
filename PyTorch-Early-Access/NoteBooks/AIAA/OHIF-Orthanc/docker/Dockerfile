@@ -1,15 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+
 # This dockerfile is used to publish the `ohif/viewer` image on dockerhub.
 #
 # It's a good example of how to build our static application and package it
 # with a web server capable of hosting it as static content.
-#
-# docker build
-# --------------
-# If you would like to use this dockerfile to build and tag an image, make sure
-# you set the context to the project's root directory:
-# https://docs.docker.com/engine/reference/commandline/build/
-#
-#
 # SUMMARY
 # --------------
 # This dockerfile has two stages:
@@ -35,23 +29,8 @@ RUN apt-get update && \
 #clone repo instead copy files below
 RUN git clone https://github.com/SachidanandAlle/Viewers.git .
 
-# Copy Files
-#COPY .docker /usr/src/app/.docker
-#COPY .webpack /usr/src/app/.webpack
-#COPY extensions /usr/src/app/extensions
-#COPY platform /usr/src/app/platform
-#COPY .browserslistrc /usr/src/app/.browserslistrc
-#COPY aliases.config.js /usr/src/app/aliases.config.js
-#COPY babel.config.js /usr/src/app/babel.config.js
-#COPY lerna.json /usr/src/app/lerna.json
-#COPY package.json /usr/src/app/package.json
-#COPY postcss.config.js /usr/src/app/postcss.config.js
-#COPY yarn.lock /usr/src/app/yarn.lock
-
 # Run the install before copying the rest of the files
 RUN yarn config set workspaces-experimental true
-# AEH needed line below to upgrade yarn to 1.22 instead of 1.12 error
-#RUN yarn global add yarn
 
 RUN yarn install
 

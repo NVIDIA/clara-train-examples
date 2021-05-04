@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+
 # Configuration file for jupyter-notebook.
 
 #------------------------------------------------------------------------------
@@ -102,7 +104,7 @@ c.NotebookApp.base_url = '/notebooks/'
 #c.NotebookApp.browser = ''
 
 ## The full path to an SSL/TLS certificate file.
-#c.NotebookApp.certfile = ''
+#c.NotebookApp.certfile = '/usr/certs/server.crt'
 
 ## The full path to a certificate authority certificate for SSL/TLS client
 #  authentication.
@@ -223,7 +225,7 @@ c.NotebookApp.base_url = '/notebooks/'
 #c.NotebookApp.kernel_spec_manager_class = 'jupyter_client.kernelspec.KernelSpecManager'
 
 ## The full path to a private key file for usage with SSL/TLS.
-#c.NotebookApp.keyfile = ''
+#c.NotebookApp.keyfile = '/usr/certs/server.key'
 
 ## Hostnames to allow as local when allow_remote_access is False.
 #  

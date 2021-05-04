@@ -1,11 +1,15 @@
 {
   "epochs": 100,
+  "learning_rate": 1e-4,
+  "num_interval_per_valid": 1,
   "use_gpu": true,
   "multi_gpu": false,
   "amp": false,
   "determinism": {
     "random_seed": 42
   },
+  "cudnn_benchmark": false,
+  "dont_load_ckpt_model": true,
   "train": {
     "loss": {
       "name": "DiceLoss",
@@ -17,7 +21,7 @@
     "optimizer": {
       "name": "Adam",
       "args": {
-        "lr": 1e-4
+        "lr": "{learning_rate}"
       }
     },
     "lr_scheduler": {
@@ -64,7 +68,7 @@
       },
       {
         "name": "SpatialCropForegroundd",
-        "path": "deepgrow.transforms.SpatialCropForegroundd",
+        "path": "monai.apps.deepgrow.transforms.SpatialCropForegroundd",
         "args": {
           "keys": [
             "image",
@@ -106,7 +110,7 @@
       },
       {
         "name": "FindAllValidSlicesd",
-        "path": "deepgrow.transforms.FindAllValidSlicesd",
+        "path": "monai.apps.deepgrow.transforms.FindAllValidSlicesd",
         "args": {
           "label": "label",
           "sids": "sids"
@@ -114,7 +118,7 @@
       },
       {
         "name": "AddInitialSeedPointd",
-        "path": "deepgrow.transforms.AddInitialSeedPointd",
+        "path": "monai.apps.deepgrow.transforms.AddInitialSeedPointd",
         "args": {
           "label": "label",
           "guidance": "guidance",
@@ -123,7 +127,7 @@
       },
       {
         "name": "AddGuidanceSignald",
-        "path": "deepgrow.transforms.AddGuidanceSignald",
+        "path": "monai.apps.deepgrow.transforms.AddGuidanceSignald",
         "args": {
           "image": "image",
           "guidance": "guidance"
@@ -157,8 +161,8 @@
       "name": "SimpleInferer"
     },
     "iteration": {
-      "name": "Interaction",
-      "path": "deepgrow.interaction.Interaction",
+      "name": "ClickInteraction",
+      "path": "deepgrow.interaction.ClickInteraction",
       "args": {
         "max_interactions": 15,
         "key_probability": "probability",
@@ -186,7 +190,7 @@
           },
           {
             "name": "FindDiscrepancyRegionsd",
-            "path": "deepgrow.transforms.FindDiscrepancyRegionsd",
+            "path": "monai.apps.deepgrow.transforms.FindDiscrepancyRegionsd",
             "args": {
               "label": "label",
               "pred": "pred",
@@ -196,7 +200,7 @@
           },
           {
             "name": "AddRandomGuidanced",
-            "path": "deepgrow.transforms.AddRandomGuidanced",
+            "path": "monai.apps.deepgrow.transforms.AddRandomGuidanced",
             "args": {
               "guidance": "guidance",
               "discrepancy": "discrepancy",
@@ -206,7 +210,7 @@
           },
           {
             "name": "AddGuidanceSignald",
-            "path": "deepgrow.transforms.AddGuidanceSignald",
+            "path": "monai.apps.deepgrow.transforms.AddGuidanceSignald",
             "args": {
               "image": "image",
               "guidance": "guidance",
@@ -229,6 +233,16 @@
     },
     "handlers": [
       {
+        "name": "CheckpointLoader",
+        "disabled": "{dont_load_ckpt_model}",
+        "args": {
+          "load_path": "{MMAR_CKPT}",
+          "load_dict": [
+            "model"
+          ]
+        }
+      },
+      {
         "name": "LrScheduleHandler",
         "args": {
           "print_lr": true
@@ -237,7 +251,7 @@
       {
         "name": "ValidationHandler",
         "args": {
-          "interval": 1,
+          "interval": "{num_interval_per_valid}",
           "epoch_level": true
         }
       },
@@ -303,104 +317,40 @@
       }
     ],
     "trainer": {
-      "name": "SupervisedTrainer"
+      "name": "SupervisedTrainer",
+      "args": {
+        "max_epochs": "{epochs}"
+      }
     }
   },
   "validate": {
     "pre_transforms": [
       {
-        "name": "LoadImaged",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "LoadImaged"
       },
       {
-        "name": "AddChanneld",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "AddChanneld"
       },
       {
-        "name": "SpatialCropForegroundd",
-        "path": "deepgrow.transforms.SpatialCropForegroundd",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ],
-          "source_key": "label",
-          "spatial_size": [
-            128,
-            192,
-            192
-          ]
-        }
+        "ref": "SpatialCropForegroundd"
       },
       {
-        "name": "Resized",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ],
-          "spatial_size": [
-            128,
-            192,
-            192
-          ],
-          "mode": [
-            "area",
-            "nearest"
-          ]
-        }
+        "ref": "Resized"
       },
       {
-        "name": "NormalizeIntensityd",
-        "args": {
-          "keys": "image",
-          "subtrahend": 208.0,
-          "divisor": 388.0
-        }
+        "ref": "NormalizeIntensityd"
       },
       {
-        "name": "FindAllValidSlicesd",
-        "path": "deepgrow.transforms.FindAllValidSlicesd",
-        "args": {
-          "label": "label",
-          "sids": "sids"
-        }
+        "ref": "FindAllValidSlicesd"
       },
       {
-        "name": "AddInitialSeedPointd",
-        "path": "deepgrow.transforms.AddInitialSeedPointd",
-        "args": {
-          "label": "label",
-          "guidance": "guidance",
-          "sids": "sids"
-        }
+        "ref": "AddInitialSeedPointd"
       },
       {
-        "name": "AddGuidanceSignald",
-        "path": "deepgrow.transforms.AddGuidanceSignald",
-        "args": {
-          "image": "image",
-          "guidance": "guidance"
-        }
+        "ref": "AddGuidanceSignald"
       },
       {
-        "name": "ToTensord",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "ToTensord"
       }
     ],
     "dataset": {
@@ -421,8 +371,8 @@
       "name": "SimpleInferer"
     },
     "iteration": {
-      "name": "Interaction",
-      "path": "deepgrow.interaction.Interaction",
+      "name": "ClickInteraction",
+      "path": "deepgrow.interaction.ClickInteraction",
       "args": {
         "max_interactions": 20,
         "key_probability": "probability",
@@ -450,7 +400,7 @@
           },
           {
             "name": "FindDiscrepancyRegionsd",
-            "path": "deepgrow.transforms.FindDiscrepancyRegionsd",
+            "path": "monai.apps.deepgrow.transforms.FindDiscrepancyRegionsd",
             "args": {
               "label": "label",
               "pred": "pred",
@@ -460,7 +410,7 @@
           },
           {
             "name": "AddRandomGuidanced",
-            "path": "deepgrow.transforms.AddRandomGuidanced",
+            "path": "monai.apps.deepgrow.transforms.AddRandomGuidanced",
             "args": {
               "guidance": "guidance",
               "discrepancy": "discrepancy",
@@ -470,7 +420,7 @@
           },
           {
             "name": "AddGuidanceSignald",
-            "path": "deepgrow.transforms.AddGuidanceSignald",
+            "path": "monai.apps.deepgrow.transforms.AddGuidanceSignald",
             "args": {
               "image": "image",
               "guidance": "guidance",
@@ -534,19 +484,10 @@
     ],
     "post_transforms": [
       {
-        "name": "Activationsd",
-        "args": {
-          "keys": "pred",
-          "sigmoid": true
-        }
+        "ref": "Activationsd"
       },
       {
-        "name": "AsDiscreted",
-        "args": {
-          "keys": "pred",
-          "threshold_values": true,
-          "logit_thresh": 0.5
-        }
+        "ref": "AsDiscreted"
       }
     ],
     "metrics": [

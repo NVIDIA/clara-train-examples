@@ -1,8 +1,10 @@
 {
-  "epochs": 10,
+  "epochs": 2,
   "use_gpu": true,
   "multi_gpu": false,
   "amp": true,
+  "num_interval_per_valid": 20,
+  "learning_rate": 2e-4,
   "determinism": {
     "random_seed": 0
   },
@@ -17,7 +19,7 @@
     "optimizer": {
       "name": "Adam",
       "args": {
-        "lr": 2e-4
+        "lr": "{learning_rate}"
       }
     },
     "lr_scheduler": {
@@ -40,21 +42,15 @@
     },
     "pre_transforms": [
       {
-        "name": "LoadNiftid",
+        "name": "LoadImaged",
         "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
+          "keys": ["image", "label"]
         }
       },
       {
         "name": "AddChanneld",
         "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
+          "keys": ["image", "label"]
         }
       },
       {
@@ -79,26 +75,16 @@
       {
         "name": "CropForegroundd",
         "args": {
-          "keys": [
-            "image",
-            "label"
-          ],
+          "keys": ["image", "label"],
           "source_key": "image"
         }
       },
       {
         "name": "RandCropByPosNegLabeld",
         "args": {
-          "keys": [
-            "image",
-            "label"
-          ],
+          "keys": ["image", "label"],
           "label_key": "label",
-          "spatial_size": [
-            96,
-            96,
-            96
-          ],
+          "spatial_size": [96, 96, 96],
           "pos": 1,
           "neg": 1,
           "num_samples": 4,
@@ -117,10 +103,7 @@
       {
         "name": "ToTensord",
         "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
+          "keys": ["image", "label"]
         }
       }
     ],
@@ -130,9 +113,9 @@
       "data_file_base_dir": "{DATA_ROOT}",
       "data_list_key": "training",
       "args": {
-        "cache_num": 32,
+        "cache_num": 4,
         "cache_rate": 1.0,
-        "num_workers": 4
+        "num_workers": 2
       }
     },
     "dataloader": {
@@ -156,7 +139,7 @@
       {
         "name": "ValidationHandler",
         "args": {
-          "interval": 20,
+          "interval": "{num_interval_per_valid}",
           "epoch_level": true
         }
       },
@@ -167,7 +150,7 @@
           "save_dir": "{MMAR_CKPT_DIR}",
           "save_dict": ["model", "optimizer", "lr_scheduler"],
           "save_final": true,
-          "save_interval": 400
+          "save_interval": 5
         }
       },
       {
@@ -223,52 +206,22 @@
   "validate": {
     "pre_transforms": [
       {
-        "name": "LoadNiftid",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "LoadImaged"
       },
       {
-        "name": "AddChanneld",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "Spacingd"
       },
       {
-        "name": "ScaleIntensityRanged",
-        "args": {
-          "keys": "image",
-          "a_min": -57,
-          "a_max": 164,
-          "b_min": 0.0,
-          "b_max": 1.0,
-          "clip": true
-        }
+        "ref": "AddChanneld"
       },
       {
-        "name": "CropForegroundd",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ],
-          "source_key": "image"
-        }
+        "ref": "ScaleIntensityRanged"
       },
       {
-        "name": "ToTensord",
-        "args": {
-          "keys": [
-            "image",
-            "label"
-          ]
-        }
+        "ref": "CropForegroundd"
+      },
+      {
+        "ref": "ToTensord"
       }
     ],
     "dataset": {
@@ -277,9 +230,9 @@
       "data_file_base_dir": "{DATA_ROOT}",
       "data_list_key": "validation",
       "args": {
-        "cache_num": 9,
+        "cache_num": 4,
         "cache_rate": 1.0,
-        "num_workers": 4
+        "num_workers": 2
       }
     },
     "dataloader": {
@@ -293,11 +246,7 @@
     "inferer": {
       "name": "SlidingWindowInferer",
       "args": {
-        "roi_size": [
-          160,
-          160,
-          160
-        ],
+        "roi_size": [160, 160, 160],
         "sw_batch_size": 4,
         "overlap": 0.5
       }
@@ -330,20 +279,10 @@
     ],
     "post_transforms": [
       {
-        "name": "Activationsd",
-        "args": {
-          "keys": "pred",
-          "softmax": true
-        }
+        "ref": "Activationsd"
       },
       {
-        "name": "AsDiscreted",
-        "args": {
-          "keys": ["pred", "label"],
-          "argmax": [true, false],
-          "to_onehot": true,
-          "n_classes": 2
-        }
+        "ref": "AsDiscreted"
       }
     ],
     "metrics": [

@@ -15,6 +15,10 @@ CONFIG_FILE=config/$CONFIG_FILE_NAME
 ENVIRONMENT_FILE=config/environment.json
 
 ########################################### check on arguments
+if [[ -z  CONFIG_FILE_NAME  ]] ;then
+   echo Need to pass in config.json
+   exit
+fi
 if [[ -z  $GPU2USE  ]] ;then
    GPU2USE=0
 fi
@@ -35,15 +39,17 @@ echo ------------------------------------
 dlprof \
        --reports=all \
        --formats=csv \
-       --output_path=$MMAR_CKPT_DIR \
+       --output_path=$MMAR_ROOT/$MMAR_CKPT_DIR \
        --key_node=global_step \
        --tb_dir=dlprof \
+       --force=true \
   python3 -u  -m medl.apps.train \
     -m $MMAR_ROOT \
     -c $CONFIG_FILE \
     -e $ENVIRONMENT_FILE \
     --set \
     print_conf=True \
+    disable_dlprof_debug=False \
     MMAR_CKPT_DIR=$MMAR_CKPT_DIR \
     epochs=1 \
     learning_rate=0.0001 \

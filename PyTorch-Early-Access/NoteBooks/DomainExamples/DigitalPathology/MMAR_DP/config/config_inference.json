@@ -1,0 +1,85 @@
+{
+  "multi_gpu": false,
+  "amp": true,
+  "model": {
+    "ts_path": "{MMAR_TORCHSCRIPT}"
+  },
+  "pre_transforms": [
+    {
+      "name": "CastToTypeD",
+      "args": {
+        "keys": [
+          "image"
+        ],
+        "dtype": "float32"
+      }
+    },
+    {
+      "name": "ScaleIntensityRangeD",
+      "args": {
+        "keys": "image",
+        "a_min": 0.0,
+        "a_max": 255.0,
+        "b_min": -1.0,
+        "b_max": 1.0
+      }
+    },
+    {
+      "name": "ToTensorD",
+      "args": {
+        "keys": [
+          "image"
+        ]
+      }
+    }
+  ],
+  "dataset": {
+    "name": "MaskedInferenceWSIDataset",
+    "data_list_file_path": "{DATASET_JSON}",
+    "data_file_base_dir": "{DATA_ROOT}",
+    "data_list_key": "testing",
+    "args": {
+      "patch_size": 224,
+      "image_reader_name": "cuCIM"
+    }
+  },
+  "dataloader": {
+    "name": "DataLoader",
+    "args": {
+      "batch_size": 400,
+      "shuffle": false,
+      "num_workers": 16
+    }
+  },
+  "inferer": {
+    "name": "SimpleInferer"
+  },
+  "handlers": [
+    {
+      "name": "StatsHandler",
+      "rank": 0,
+      "args": {
+        "iteration_print_logger": "lambda engine: print(f'image: \"{engine.state.batch[\"name\"][0]}\", iter: {engine.state.iteration}/{engine.state.epoch_length}') if engine.state.iteration % 100 == 0 else None",
+        "output_transform": "lambda x: None"
+      }
+    },
+    {
+      "name": "ProbMapProducer",
+      "args": {
+        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}"
+      }
+    }
+  ],
+  "post_transforms": [
+    {
+      "name": "ActivationsD",
+      "args": {
+        "keys": "pred",
+        "sigmoid": true
+      }
+    }
+  ],
+  "evaluator": {
+    "name": "SupervisedEvaluator"
+  }
+}

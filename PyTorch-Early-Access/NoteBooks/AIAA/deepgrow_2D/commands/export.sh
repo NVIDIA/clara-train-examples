@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+
 my_dir="$(dirname "$(readlink -f "$0")")"
 . $my_dir/set_env.sh
 
@@ -10,7 +12,7 @@ CONFIG_FILE=config/config_train.json
 ENVIRONMENT_FILE=config/environment.json
 
 INPUT_CKPT="${MMAR_ROOT}/models/model.pt"
-OUTPUT_CKPT="${MMAR_ROOT}/models/model.ts" # rename as model.pt for AIAA
+OUTPUT_CKPT="${MMAR_ROOT}/models/model.ts"
 
 python3 -u -m medl.apps.export \
     -m $MMAR_ROOT \

@@ -28,7 +28,7 @@
       }
     },
     {
-      "name": "aiaa.apps.deepgrow.transforms.AddGuidanceFromPointsd",
+      "name": "monai.apps.deepgrow.transforms.AddGuidanceFromPointsd",
       "args": {
         "ref_image": "image",
         "guidance": "guidance",
@@ -36,7 +36,7 @@
       }
     },
     {
-      "name": "aiaa.apps.deepgrow.transforms.Fetch2DSliced",
+      "name": "monai.apps.deepgrow.transforms.Fetch2DSliced",
       "args": {
         "keys": "image",
         "guidance": "guidance"
@@ -49,7 +49,7 @@
       }
     },
     {
-      "name": "aiaa.apps.deepgrow.transforms.SpatialCropGuidanced",
+      "name": "monai.apps.deepgrow.transforms.SpatialCropGuidanced",
       "args": {
         "keys": "image",
         "guidance": "guidance",
@@ -71,7 +71,7 @@
       }
     },
     {
-      "name": "aiaa.apps.deepgrow.transforms.ResizeGuidanced",
+      "name": "monai.apps.deepgrow.transforms.ResizeGuidanced",
       "args": {
         "guidance": "guidance",
         "ref_image": "image"
@@ -86,22 +86,51 @@
       }
     },
     {
-      "name": "aiaa.apps.deepgrow.transforms.AddGuidanceSignald",
+      "name": "monai.apps.deepgrow.transforms.AddGuidanceSignald",
       "args": {
         "image": "image",
         "guidance": "guidance"
       }
     }
   ],
+  "cache_until": "monai.apps.deepgrow.transforms.AddGuidanceFromPointsd",
   "inference": {
-    "name": "aiaa.inference.TritonInference",
     "input": "image",
     "output": "pred",
     "meta_data": {
       "deepgrow": "2D"
     },
-    "args": {
-      "scanning_window": false
+    "AIAA": {
+      "name": "aiaa.inference.PyTorchInference"
+    },
+    "TRITON": {
+      "name": "aiaa.inference.TritonInference",
+      "triton_model_config": {
+        "platform": "pytorch_libtorch",
+        "max_batch_size": 32,
+        "input": [
+          {
+            "name": "INPUT__0",
+            "data_type": "TYPE_FP32",
+            "dims": [
+              3,
+              256,
+              256
+            ]
+          }
+        ],
+        "output": [
+          {
+            "name": "OUTPUT__0",
+            "data_type": "TYPE_FP32",
+            "dims": [
+              1,
+              256,
+              256
+            ]
+          }
+        ]
+      }
     }
   },
   "post_transforms": [
@@ -127,7 +156,7 @@
       }
     },
     {
-      "name": "aiaa.apps.deepgrow.transforms.RestoreCroppedLabeld",
+      "name": "monai.apps.deepgrow.transforms.RestoreLabeld",
       "args": {
         "keys": "pred",
         "ref_image": "image",
@@ -147,31 +176,5 @@
       "image": "pred",
       "json": "result"
     }
-  },
-  "triton": {
-    "platform": "pytorch_libtorch",
-    "max_batch_size": 32,
-    "input": [
-      {
-        "name": "INPUT__0",
-        "data_type": "TYPE_FP32",
-        "dims": [
-          3,
-          256,
-          256
-        ]
-      }
-    ],
-    "output": [
-      {
-        "name": "OUTPUT__0",
-        "data_type": "TYPE_FP32",
-        "dims": [
-          1,
-          256,
-          256
-        ]
-      }
-    ]
   }
 }

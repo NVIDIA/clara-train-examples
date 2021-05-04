@@ -1,19 +1,61 @@
-version: "3.6"
+# SPDX-License-Identifier: Apache-2.0
+
+version: "3.8"
 services:
   claratrain:
     container_name: claradevday-pt
-    image: nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v4.0-EA2
     hostname: claratrain
-#    ports:
-#      - "3031:5000" #mapped as http://<machinename>:ohifport/aiaa/
-#      - "8899:8888" #mapped as http://<machinename>:ohifport/notebooks/
+    ##### to build image with GPU dashboard
+#    build:
+#      context: ../../scripts/docker/         # Project root
+#      dockerfile: ./Dockerfile   # Relative to context
+#    image: clara-train-nvdashboard:v4.0-21-02-qa4
+    ##### only
+    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-21-02-qa6
+    depends_on:
+      - tritonserver
+    ports:
+      #- "8899:8888" # Jupyter lab port mapped as http://<machinename>:ohifport/notebooks/
+      - "3031:5000" # AIAA port mapped as http://<machinename>:ohifport/aiaa/
     ipc: host
     volumes:
-      - ../../:/claraDevDay/
+      - ${TRAIN_DEV_DAY_ROOT}:/claraDevDay/
+      # certification files
+      #- ./nginx/config/nginx-selfsigned.crt:/usr/certs/server.crt:ro
+      #- ./nginx/config/nginx-selfsigned.key:/usr/certs/server.key:ro
     command: "jupyter lab /claraDevDay --ip 0.0.0.0 --allow-root --no-browser --config /claraDevDay/AIAA/OHIF-Orthanc/config/jupyter_notebook_config.py"
 #############################################################
+  tritonserver:
+    image: nvcr.io/nvidia/tritonserver:21.02-py3
+    container_name: aiaa-triton
+    hostname: tritonserver
+    restart: unless-stopped
+    command: >
+      sh -c "chmod 777 /triton_models &&
+        /opt/tritonserver/bin/tritonserver \
+          --model-store /triton_models \
+          --model-control-mode="poll" \
+          --repository-poll-secs=5 \
+          --log-verbose ${TRITON_VERBOSE}"
+    volumes:
+      - ${TRAIN_DEV_DAY_ROOT}/AIAA/workspace/triton_models:/triton_models
+#    shm_size: 1gb
+#    ulimits:
+#      memlock: -1
+#      stack: 67108864
+#    logging:
+#      driver: json-file
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [ gpu ]
+            # To specify certain GPU uncomment line below
+            #device_ids: ['0,1']
+#############################################################
   ohif:
-    container_name: aiaa-ohif-orthanc
+    container_name: aiaa-ohif
     build:
       context: ./docker/         # Project root
       dockerfile: ./Dockerfile   # Relative to context
@@ -24,24 +66,38 @@ services:
     depends_on:
     - orthanc
     ports:
+      # map one of the following ports
       - "3030:80"
+      #- "3030:443"
     volumes:
-      - ./config/ohif_orthanc_default.js:/usr/share/nginx/html/app-config.js:ro
-      #- ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./config/nginxWPassword.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./config/.htpasswd:/etc/nginx/conf.d/.htpasswd:ro
+      - ./nginx/landingPage/:/usr/share/nginx/clarahtml/
+      # Logs
+      - ${ConfigLocalPath}/logs/nginx:/var/logs/nginx
+      - ./nginx/config/ohif_orthanc_default.js:/usr/share/nginx/html/app-config.js:ro
+      # password file
+      - ./nginx/config/.htpasswd:/etc/nginx/conf.d/.htpasswd:ro
+      # need one of the following configs
+      #- ./nginx/config/nginxNoPassword.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/config/nginxWPassword.conf:/etc/nginx/conf.d/default.conf:ro
+      #- ./nginx/config/nginxHttpsWPassword.conf:/etc/nginx/conf.d/default.conf:ro
+      # certification files
+      - ./nginx/config/nginx-selfsigned.crt:/usr/certs/server.crt:ro
+      - ./nginx/config/nginx-selfsigned.key:/usr/certs/server.key:ro
 #############################################################
   orthanc:
     image: jodogne/orthanc-plugins:1.9.1
     container_name: aiaa-orthanc
     hostname: orthanc
+    command: "/etc/orthanc --verbose"
+    restart: unless-stopped
 #    ports:
 #      - "3042:8042"  # already covered by nginx #mapped as http://<machinename>:ohifport/pacs/
 #      - "3032:4242"  # we use hostname-orthanc internally to connect and get dicom images
     volumes:
+      # Config
       - ./config/orthanc.json:/etc/orthanc/orthanc.json:ro
       #- ./config/orthancSachi.json:/etc/orthanc/orthanc.json:ro
       # Persist data
       #- /raid/users/aharouni/dockers/orthanc/orthanc-db/:/var/lib/orthanc/db/
-      - ${ConfigLocalPath}/orthanc-db/:/var/lib/orthanc/db/
-    command: "/etc/orthanc --verbose"
+      - /raid/users/aharouni/dockers/claraTrain/claraTrainExamples/PyTorch-Early-Access/NoteBooks/AIAA/OHIF-Orthanc/data/orthanc-db:/var/lib/orthanc/db/
+      #- ${ConfigLocalPath}/orthanc-db/:/var/lib/orthanc/db/

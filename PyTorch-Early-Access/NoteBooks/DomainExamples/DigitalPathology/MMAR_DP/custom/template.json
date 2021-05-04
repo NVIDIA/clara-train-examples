@@ -1,0 +1,16 @@
+{
+    "description": "Tumor Detection on Pathology Images",
+    "modality": { "0": "Microscopic" },
+    "labels": { "0": "Background", "1": "Tumor" },
+    "name": "Pathology",
+    "reference": "Camelyon16",
+    "tensorImageSize": "2D",
+    "validation": [ ], 
+    "training": [ ],
+    "testing": [
+        {
+            "image": "WSI/tumor_091.tif",
+            "mask": "FG/tumor_091.npy"
+        }
+    ]
+}

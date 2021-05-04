@@ -24,8 +24,9 @@
   "JpipTransferSyntaxAccepted": true,
   "Mpeg2TransferSyntaxAccepted": true,
   "RleTransferSyntaxAccepted": true,
+  "Mpeg4TransferSyntaxAccepted": true,
   "UnknownSopClassAccepted": true,
-  "DicomScpTimeout": 60,
+  "DicomScpTimeout": 30,
 
   "RemoteAccessAllowed": true,
   "SslEnabled": false,
@@ -36,7 +37,8 @@
     "test": "test"
   },
   "DicomModalities": {
-       "PYNETDICOM" : [ "PYNETDICOM", "*", 104 ]
+       "PYNETDICOM" : [ "PYNETDICOM", "*", 104 ],
+       "XNAT" : [ "XNAT", "10.110.20.153", 8104 ]
   },
   "DicomModalitiesInDatabase": false,
   "DicomAlwaysAllowEcho": true,
