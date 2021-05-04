@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+
 my_dir="$(dirname "$0")"
 . $my_dir/set_env.sh
 
@@ -21,6 +23,4 @@ python3 -u  -m medl.apps.train \
     --write_train_stats \
     --set \
     print_conf=True \
-    DATA_ROOT=$MMAR_ROOT/../../../../sampleData/ \
-    DATASET_JSON=$MMAR_ROOT/../../../../sampleData/dataset_autoML8files.json \
     ${additional_options}

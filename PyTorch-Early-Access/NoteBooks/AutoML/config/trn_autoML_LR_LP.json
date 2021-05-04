@@ -8,6 +8,8 @@
   "determinism": {
     "random_seed": 0
   },
+  "cudnn_benchmark": false,
+  "dont_load_ckpt_model": true,
   "search": [
     {
       "domain": "lr",
@@ -18,35 +20,30 @@
   ],
   "train": {
     "loss": {
-      "name": "Dice",
+      "name": "DiceLoss",
       "args": {
-        "squared_pred": true,
-        "is_onehot_targets": false,
-        "skip_background": true
+        "include_background": true,
+        "to_onehot_y": true,
+        "softmax": true
       }
     },
     "optimizer": {
-      "name": "Adam"
-    },
-    "aux_ops": [
-      {
-        "name": "DiceMaskedOutput",
-        "args": {
-        "skip_background": true,
-          "tags": ["dice_tc"]
-        }
-      }
-    ],
-    "lr_scheduler": {
-      "name": "ReducePoly",
+      "name": "Adam",
       "args": {
-        "poly_power": 0.99
+        "lr": "{learning_rate}"
+      }
+    },
+    "lr_scheduler": {
+      "name": "StepLR",
+      "args": {
+        "step_size": 5000,
+        "gamma": 0.1
       },
       "search": [
         {
           "type": "float",
-          "args": ["poly_power"],
-          "targets": [0.9,0.99],
+          "args": ["gamma"],
+          "targets": [0.1,0.2],
           "domain": "lr"
         }
       ]
@@ -59,7 +56,7 @@
         "out_channels": 2,
         "channels": [16, 32, 64, 128, 256],
         "strides": [2, 2, 2, 2],
-        "num_res_units": 2,
+        "num_res_units": 1,
         "norm": "batch"
       }
     },
@@ -71,7 +68,7 @@
         }
       },
       {
-        "name": "AddChanneld",
+        "name": "EnsureChannelFirstd",
         "args": {
           "keys": ["image", "label"]
         }
@@ -132,7 +129,7 @@
         ]
       },
       {
-        "name": "RandGaussianNoise",
+        "name": "RandGaussianNoised",
         "args": {
           "keys": "image",
           "prob": 0.10
@@ -169,6 +166,14 @@
       "name": "SimpleInferer"
     },
     "handlers": [
+      {
+        "name": "CheckpointLoader",
+        "disabled": "{dont_load_ckpt_model}",
+        "args": {
+          "load_path": "{MMAR_CKPT}",
+          "load_dict": ["model"]
+        }
+      },
       {
         "name": "LrScheduleHandler",
         "args": {
@@ -239,7 +244,10 @@
       }
     ],
     "trainer": {
-      "name": "SupervisedTrainer"
+      "name": "SupervisedTrainer",
+      "args": {
+        "max_epochs": "{epochs}"
+      }
     }
   },
   "validate": {
@@ -251,7 +259,7 @@
         "ref": "Spacingd"
       },
       {
-        "ref": "AddChanneld"
+        "ref": "EnsureChannelFirstd"
       },
       {
         "ref": "ScaleIntensityRanged"

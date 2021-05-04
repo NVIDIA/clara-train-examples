@@ -8,10 +8,13 @@
   "determinism": {
     "random_seed": 0
   },
+  "cudnn_benchmark": false,
+  "dont_load_ckpt_model": true,
   "train": {
     "loss": {
       "name": "DiceLoss",
       "args": {
+        "include_background": true,
         "to_onehot_y": true,
         "softmax": true
       }
@@ -23,9 +26,10 @@
       }
     },
     "lr_scheduler": {
-      "name": "ReducePoly",
+      "name": "StepLR",
       "args": {
-        "poly_power": 0.99
+        "step_size": 5000,
+        "gamma": 0.1
         }
     },
     "model": {
@@ -36,7 +40,7 @@
         "out_channels": 2,
         "channels": [16, 32, 64, 128, 256],
         "strides": [2, 2, 2, 2],
-        "num_res_units": 2,
+        "num_res_units": 1,
         "norm": "batch"
         }
     },
@@ -48,7 +52,7 @@
         }
       },
       {
-        "name": "AddChanneld",
+        "name": "EnsureChannelFirstd",
         "args": {
           "keys": ["image", "label"]
         }
@@ -116,12 +120,12 @@
         ]
       },
       {
-        "name": "RandGaussianNoise",
+        "name": "RandGaussianNoised",
         "args": {
           "keys": "image",
           "prob": 0.10
         },
-        "apply": {"probability": "myProb"}
+        "apply": {"prob": "myProb"}
       },
       {
         "name": "ToTensord",
@@ -153,6 +157,14 @@
       "name": "SimpleInferer"
     },
     "handlers": [
+      {
+        "name": "CheckpointLoader",
+        "disabled": "{dont_load_ckpt_model}",
+        "args": {
+          "load_path": "{MMAR_CKPT}",
+          "load_dict": ["model"]
+        }
+      },
       {
         "name": "LrScheduleHandler",
         "args": {
@@ -223,7 +235,10 @@
       }
     ],
     "trainer": {
-      "name": "SupervisedTrainer"
+      "name": "SupervisedTrainer",
+      "args": {
+        "max_epochs": "{epochs}"
+      }
     }
   },
   "validate": {
@@ -235,7 +250,7 @@
         "ref": "Spacingd"
       },
       {
-        "ref": "AddChanneld"
+        "ref": "EnsureChannelFirstd"
       },
       {
         "ref": "ScaleIntensityRanged"
