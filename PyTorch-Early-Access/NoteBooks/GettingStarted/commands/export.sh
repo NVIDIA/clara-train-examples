@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+
 my_dir="$(dirname "$(readlink -f "$0")")"
 . $my_dir/set_env.sh
 

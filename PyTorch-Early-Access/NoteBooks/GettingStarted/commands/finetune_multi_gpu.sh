@@ -12,7 +12,9 @@ additional_options="$*"
 CONFIG_FILE=config/config_train.json
 ENVIRONMENT_FILE=config/environment.json
 
-python3 -u -m medl.apps.train \
+python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 \
+    --master_addr="localhost" --master_port=1234 \
+    -m medl.apps.train \
     -m $MMAR_ROOT \
     -c $CONFIG_FILE \
     -e $ENVIRONMENT_FILE \
@@ -21,6 +23,6 @@ python3 -u -m medl.apps.train \
     print_conf=True \
     epochs=1260 \
     learning_rate=0.0002 \
-    multi_gpu=False \
+    multi_gpu=True \
     dont_load_ckpt_model=False \
     ${additional_options}

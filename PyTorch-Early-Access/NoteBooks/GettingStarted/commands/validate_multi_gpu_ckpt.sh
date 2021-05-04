@@ -19,19 +19,22 @@ ENVIRONMENT_FILE=config/environment.json
 
 ########################################### check on arguments
 if [[ -z  $GPU2USE  ]] ;then
-   GPU2USE=0
+   GPU2USE=0,1,2,3
 fi
 export CUDA_VISIBLE_DEVICES=$GPU2USE
 echo ------------------------------------
-#MMAR_CKPT=models/${CONFIG_FILE_NAME::-5}/model.pt #remove .json from file name
-MMAR_TORCHSCRIPT=models/${CONFIG_FILE_NAME::-5}/model.ts #remove .json from file name
+MMAR_CKPT=models/${CONFIG_FILE_NAME::-5}/model.pt #remove .json from file name
+#MMAR_TORCHSCRIPT=models/${CONFIG_FILE_NAME::-5}/model.ts #remove .json from file name
 
-python3 -u  -m medl.apps.evaluate \
+python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 \
+    --master_addr="localhost" --master_port=1234 \
+    -m medl.apps.evaluate \
     -m $MMAR_ROOT \
     -c $CONFIG_FILE \
     -e $ENVIRONMENT_FILE \
     --set \
-    MMAR_TORCHSCRIPT=$MMAR_TORCHSCRIPT \
+    MMAR_CKPT=$MMAR_CKPT \
     print_conf=True \
-    use_gpu=True \
-    multi_gpu=False
+    multi_gpu=True \
+    dont_load_ts_model=True \
+    dont_load_ckpt_model=False

@@ -23,7 +23,8 @@ if [[ -z  $GPU2USE  ]] ;then
 fi
 export CUDA_VISIBLE_DEVICES=$GPU2USE
 echo ------------------------------------
-MMAR_CKPT=models/${CONFIG_FILE_NAME::-5}/model.pt #remove .json from file name
+#MMAR_CKPT=models/${CONFIG_FILE_NAME::-5}/model.pt #remove .json from file name
+MMAR_TORCHSCRIPT=models/${CONFIG_FILE_NAME::-5}/model.ts #remove .json from file name
 
 python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 \
     --master_addr="localhost" --master_port=1234 \
@@ -32,7 +33,8 @@ python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 \
     -c $CONFIG_FILE \
     -e $ENVIRONMENT_FILE \
     --set \
-    MMAR_CKPT=$MMAR_CKPT \
+    MMAR_TORCHSCRIPT=$MMAR_TORCHSCRIPT \
     print_conf=True \
-    use_gpu=True \
-    multi_gpu=True
+    multi_gpu=True \
+    dont_load_ts_model=False \
+    dont_load_ckpt_model=True
