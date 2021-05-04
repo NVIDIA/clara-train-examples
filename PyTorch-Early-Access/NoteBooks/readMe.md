@@ -14,8 +14,8 @@ There are multiple notebooks showing:
 
 1. Getting Started 
     1. [Getting Started](GettingStarted/GettingStarted.ipynb)
-    1. <del>[Bring your own component BYOC](GettingStarted/BYOC.ipynb)</del>
-2. AIAA:
+    1. [Bring your own component BYOC](GettingStarted/BYOC.ipynb)
+2. AI Assisted Annotation (AIAA):
     1. [Basics](AIAA/AIAA.ipynb)
     2. [Train Deepgrow (2D and 3D)](AIAA/DeepGrow.ipynb)
     3. [OHIF](AIAA/AIAAwOHIF.ipynb)
@@ -94,47 +94,53 @@ Otherwise, you can install docker and docker compose using script provided by
 cd scripts 
 sudo installDocker.sh
 ```
-## 3. Start the docker 
+## 3. Start Docker-Compose 
 
 To begin, go into the scripts folder
           
        cd scripts
 
-run command below which will pull the latest clara train SDK and start it in interactive mode.
+run command below which will pull and start the latest clara train SDK and Triton server for AIAA.
  
-    ./startDocker.sh <portForNotebook> <gpulist>  <AIAA_PORT>
+    ./restartClaraTrain.sh
 
-For example to run with 4 gpus on port `8890` and AIAA server on port `5000` run
+You can now go to your browser on port 3030 and use the token printed out as below
 
-    ./startDocker.sh 8890 '"device=1,3"' 5000
-    
-By default `./startDocker.sh` will use all gpu available and ports 8890 for notebooks and 5000 for AIAA 
+    [I 23:47:18.654 LabApp] http://claratrain:8888/?token=3e5ef35f982ea5a3e432322b07b6d33b5fc51a4fcb0ffa88
+    [I 23:47:18.654 LabApp]  or http://127.0.0.1:8888/?token=3e5ef35f982ea5a3e432322b07b6d33b5fc51a4fcb0ffa88
+
+#### 3.1 Customize docker compose 
+
+You should edit the docker-compose.yml file in case you want to:
+- start jupter lab on different port than 3030
+- change the AIAA port 
+as 
+```
+    ports:
+      - "3030:8888"  # Jupyter lab port 
+      - "3031:5000"  # AIAA port
+```
+
+To expose certain gpus to Triton please uncomment lines at the end of the docker-compose file 
+
+```
+      capabilities: [ gpu ]
+      # To specify certain GPU uncomment line below
+      #device_ids: ['0,1']
+```
 
 Now you should be inside the docker as see output similar to
 <br>
 <img src="screenShots/startDocker.png" alt="drawing" width="600"/>
 
-## 4. Start jupyter lab 
+## 4. Open Browser with given token
 
-In order to start jupyter lab only, you could simple run command below. You could also install GPU extensions then start the Jupyter lab as in step 3.1  
-
-    ./claraDevDay/scripts/startJupyterLabOnly.sh
-
-#### 4.1 (optional) Install GPU Dashboard extension and Start jupyter lab
-
-This docker uses the GPU Dashboard extension from RAPIDS AI team in NVIDIA (https://github.com/rapidsai/jupyterlab-nvdashboard). 
-Please run the following commands inside the docker to install the plugins and run jupyterlab
-
-    ./claraDevDay/scripts/installDashBoardInDocker.sh
-
-## 5. Open Browser with given token
-
-Now you can go to your browser on the port you specified above (default is 8890) with the token provided in the terminal. 
+Now you can go to your browser on the port you specified above (default is 3030) with the token provided in the terminal. 
 You should see jupyter lab where you should start running the [Welcome Notebook](Welcome.ipynb). 
 This page shows all notebooks available as 
 
 
-#### 6. Activating GPU Dashboard (optional if executed 4.1)
+## 5. Activating GPU Dashboard (optional)
 
 Before starting, we need to activate the GPU Dashboard. 
 Look at the left sidebar and click on `System Dashboards`. 

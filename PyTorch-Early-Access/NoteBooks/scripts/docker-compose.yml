@@ -6,13 +6,12 @@ services:
     container_name: claradevday-pt
     hostname: claratrain
     ##### to build image with GPU dashboard
-#    build:
-#      context: ./docker/         # Project root
-#      dockerfile: ./Dockerfile   # Relative to context
-    #image: clara-train-nvdashboard:v4.0-qa6
-#    image: clara-train-nvdashboard:v4.0-qa6-5
+    build:
+      context: ./dockerWGPUDashboardPlugin/         # Project root
+      dockerfile: ./Dockerfile   # Relative to context
+    image: clara-train-nvdashboard:v4.0-qa10
     ##### only
-    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa6-5
+#    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa10
     depends_on:
       - tritonserver
     ports:
@@ -21,6 +20,7 @@ services:
     ipc: host
     volumes:
       - ${TRAIN_DEV_DAY_ROOT}:/claraDevDay/
+      - /raid/users/aharouni/data:/data/
     command: "jupyter lab /claraDevDay --ip 0.0.0.0 --allow-root --no-browser --config /claraDevDay/scripts/jupyter_notebook_config.py"
 #    command: tail -f /dev/null
 #    tty: true
