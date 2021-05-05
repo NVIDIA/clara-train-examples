@@ -50,12 +50,18 @@
   ],
   "cross_validate": true,
   "cross_site_validation": {
-      "is_participating": true,
-  "model_validator": {
-          "path": "medl.apps.fed_learn.validators.client_validator.ClientValidator",
-          "args": {}
-      },
-      "inbound_filters": [],
-      "outbound_filters": []
-    }
+    "is_participating": true,
+    "model_validator": {
+      "path": "medl.apps.fed_learn.validators.client_validator.ClientValidator",
+      "args": {}
+    },
+    "inbound_filters": [
+      {
+        "path": "medl.apps.fed_learn.filters.he_eval_decryptor.HEEvalDecryptor",
+        "args": {
+        }
+      }
+    ],
+    "outbound_filters": []
+  }
 }

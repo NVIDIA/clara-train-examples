@@ -14,16 +14,15 @@
     ],
     "aggregator":
       {
-        "standard_path": "flare.experimental.homomorphic_encryption.he_accumulate_model_aggregator.HEAccumulateWeightedAggregator",
-        "intime_path": "flare.experimental.homomorphic_encryption.he_intime_accumulate_model_aggregator.HEInTimeAccumulateWeightedAggregator",
+        "path": "flare.experimental.homomorphic_encryption.he_intime_accumulate_model_aggregator.HEInTimeAccumulateWeightedAggregator",
         "regular_name": "AccumulateWeightedAggregator",
         "path": "flare.experimental.homomorphic_encryption.he_accumulate_model_aggregator.HEAccumulateWeightedAggregator",
         "args": {
             "aggregation_weights":
                 {
-                "client0": 1,
-                "client1": 1.5,
-                "client2": 0.8
+                "client0": 0.2,
+                "client1": 0.5,
+                "client2": 0.3
                 }
           }
       },
