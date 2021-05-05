@@ -8,18 +8,6 @@
     "client": {
         "outbound_filters": [
           {
-              "path": "medl.apps.fed_learn.client.metadata_generator.IteratorNumberGenerator",
-              "args": {
-                  "field": "n_iter"
-              }
-          },
-          {
-              "path": "medl.apps.fed_learn.client.metadata_generator.BestMetricGenerator",
-              "args": {
-                  "field": "best_validation_metric"
-              }
-          },
-          {
             "path": "flare.experimental.homomorphic_encryption.he_model_encryptor.HEModelEncryptor",
             "args": {
               "encrypt_layers": [

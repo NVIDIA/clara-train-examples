@@ -15,8 +15,6 @@
     "aggregator":
       {
         "path": "flare.experimental.homomorphic_encryption.he_intime_accumulate_model_aggregator.HEInTimeAccumulateWeightedAggregator",
-        "regular_name": "AccumulateWeightedAggregator",
-        "path": "flare.experimental.homomorphic_encryption.he_accumulate_model_aggregator.HEAccumulateWeightedAggregator",
         "args": {
             "aggregation_weights":
                 {
@@ -26,10 +24,8 @@
                 }
           }
       },
-    "outbound_filters": [
-    ],
-    "inbound_filters": [
-    ],
+    "outbound_filters": [],
+    "inbound_filters": [],
     "model_persistor":
     {
         "path": "flare.experimental.homomorphic_encryption.he_pt_file_model_persistor.HEPTFileModelPersistor",
@@ -50,9 +46,13 @@
         }
     },
     "shareable_generator": {
-      "path": "flare.experimental.homomorphic_encryption.he_model_shareable_generator.HEModelShareableGenerator",
-      "args": {
-          "tenseal_context_file": "/workspace/startup/server_context.tenseal"
-      }
-    }
+      "path": "flare.experimental.homomorphic_encryption.he_model_shareable_generator.HEModelShareableGenerator"
+    },
+    "handlers":
+    [
+        {
+            "name": "IntimeModelSelectionHandler",
+            "args": {}
+        }
+    ]
 }
