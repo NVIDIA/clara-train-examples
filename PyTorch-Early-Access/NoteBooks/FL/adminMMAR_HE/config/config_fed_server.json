@@ -14,15 +14,7 @@
     ],
     "aggregator":
       {
-        "path": "flare.experimental.homomorphic_encryption.he_intime_accumulate_model_aggregator.HEInTimeAccumulateWeightedAggregator",
-        "args": {
-            "aggregation_weights":
-                {
-                "client0": 0.2,
-                "client1": 0.5,
-                "client2": 0.3
-                }
-          }
+        "path": "flare.experimental.homomorphic_encryption.he_intime_accumulate_model_aggregator.HEInTimeAccumulateWeightedAggregator"
       },
     "outbound_filters": [],
     "inbound_filters": [],
@@ -39,8 +31,7 @@
               "out_channels": 2,
               "channels": [16, 32, 64, 128, 256],
               "strides": [2, 2, 2, 2],
-              "num_res_units": 2,
-              "norm": "batch"
+              "num_res_units": 2
             }
           }
         }
