@@ -1,10 +1,10 @@
 {
   "epochs": 2,
-  "use_gpu": true,
   "multi_gpu": false,
   "amp": false,
   "num_interval_per_valid": 1,
   "learning_rate": 2e-4,
+  "tf32": false,
   "disable_dlprof_debug": true,
   "determinism": {
     "random_seed": 0
@@ -40,8 +40,7 @@
         "out_channels": 2,
         "channels": [16, 32, 64, 128, 256],
         "strides": [2, 2, 2, 2],
-        "num_res_units": 2,
-        "norm": "batch"
+        "num_res_units": 2
         }
       },
     "pre_transforms": [

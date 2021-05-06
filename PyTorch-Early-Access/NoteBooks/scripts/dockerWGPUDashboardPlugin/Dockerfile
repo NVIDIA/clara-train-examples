@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-FROM nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa10
+FROM nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa11
 
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip
@@ -20,7 +20,13 @@ RUN pip install jupyter-server-proxy
 ####
 
 ### bokeh dependences
-RUN pip install Jinja2 && pip install numpy && pip install packaging && pip install pillow && pip install python-dateutil && pip install six  && pip install tornado
+RUN pip install Jinja2 \
+    && pip install numpy \
+    && pip install packaging \
+    && pip install pillow \
+    && pip install python-dateutil \
+    && pip install six  \
+    && pip install tornado
 RUN pip install bokeh
 RUN pip install jupyterlab
 RUN pip install jupyterlab-nvdashboard

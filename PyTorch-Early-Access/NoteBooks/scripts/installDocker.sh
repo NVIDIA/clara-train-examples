@@ -263,8 +263,13 @@ install_docker_compose() {
     local docker_compose_ver
     docker_compose_ver="$(docker-compose version --short 2> /dev/null || true)"
     if [ -n "$docker_compose_ver" ]; then
-        info "Docker Compose version ${docker_compose_ver} is already installed. Skipping docker-compose installation..."
-        return
+        if [ "$(printf '%s\n' "${DOCKER_COMPOSE_VER}" "${docker_compose_ver}" | sort -V | head -n1)" = "${DOCKER_COMPOSE_VER}" ]; then
+            info "Docker Compose version ${docker_compose_ver} is already installed. Skipping docker-compose installation..."
+            return
+        else
+            info "Docker Compose version ${docker_compose_ver} is already installed."
+            info "---- However we require version ${DOCKER_COMPOSE_VER} or above. Upgrading...."
+        fi
     fi
     info "Start installing docker-compose Version ${DOCKER_COMPOSE_VER}..."
     sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VER}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose

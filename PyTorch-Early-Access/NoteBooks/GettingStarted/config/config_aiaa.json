@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "type": "segmentation",
+  "labels": [
+    "spleen"
+  ],
+  "description": "A pre-trained model for volumetric (3D) segmentation of the spleen from CT image",
+  "pre_transforms": [
+    {
+      "name": "monai.transforms.LoadImaged",
+      "args": {
+        "keys": "image"
+      }
+    },
+    {
+      "name": "monai.transforms.AddChanneld",
+      "args": {
+        "keys": "image"
+      }
+    },
+    {
+      "name": "monai.transforms.Spacingd",
+      "args": {
+        "keys": "image",
+        "pixdim": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "name": "monai.transforms.ScaleIntensityRanged",
+      "args": {
+        "keys": "image",
+        "a_min": -57,
+        "a_max": 164,
+        "b_min": 0.0,
+        "b_max": 1.0,
+        "clip": true
+      }
+    }
+  ],
+  "inference": {
+    "input": "image",
+    "output": "pred",
+    "AIAA": {
+      "name": "aiaa.inference.PyTorchInference",
+      "args": {
+        "scanning_window": true,
+        "roi": [
+          160,
+          160,
+          160
+        ],
+        "overlap": 0.25,
+        "device": "cpu",
+        "sw_device": "cuda"
+      }
+    },
+    "TRITON": {
+      "name": "aiaa.inference.TritonInference",
+      "args": {
+        "scanning_window": true,
+        "roi": [
+          160,
+          160,
+          160
+        ],
+        "overlap": 0.5
+      },
+      "triton_model_config": {
+        "platform": "pytorch_libtorch",
+        "max_batch_size": 1,
+        "input": [
+          {
+            "name": "INPUT__0",
+            "data_type": "TYPE_FP32",
+            "dims": [
+              1,
+              160,
+              160,
+              160
+            ]
+          }
+        ],
+        "output": [
+          {
+            "name": "OUTPUT__0",
+            "data_type": "TYPE_FP32",
+            "dims": [
+              2,
+              160,
+              160,
+              160
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "post_transforms": [
+    {
+      "name": "monai.transforms.AddChanneld",
+      "args": {
+        "keys": "pred"
+      }
+    },
+    {
+      "name": "monai.transforms.Activationsd",
+      "args": {
+        "keys": "pred",
+        "softmax": true
+      }
+    },
+    {
+      "name": "monai.transforms.AsDiscreted",
+      "args": {
+        "keys": "pred",
+        "argmax": true
+      }
+    },
+    {
+      "name": "monai.transforms.SqueezeDimd",
+      "args": {
+        "keys": "pred",
+        "dim": 0
+      }
+    },
+    {
+      "name": "monai.transforms.ToNumpyd",
+      "args": {
+        "keys": "pred"
+      }
+    },
+    {
+      "name": "aiaa.transforms.Restored",
+      "args": {
+        "keys": "pred",
+        "ref_image": "image"
+      }
+    },
+    {
+      "name": "aiaa.transforms.ExtremePointsd",
+      "args": {
+        "keys": "pred",
+        "result": "result",
+        "points": "points"
+      }
+    },
+    {
+      "name": "aiaa.transforms.BoundingBoxd",
+      "args": {
+        "keys": "pred",
+        "result": "result",
+        "bbox": "bbox"
+      }
+    }
+  ],
+  "writer": {
+    "name": "aiaa.transforms.Writer",
+    "args": {
+      "image": "pred",
+      "json": "result"
+    }
+  }
+}
