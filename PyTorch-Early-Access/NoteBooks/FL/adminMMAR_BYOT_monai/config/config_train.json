@@ -1,0 +1,11 @@
+{
+  "max_epochs": 100,
+  "learning_rate": 2e-4,
+  "amp": true,
+  "use_gpu": true,
+  "multi_gpu": false,
+  "val_interval": 1,
+  "save_interval": 400,
+  "data_list_file_path": "/data_4FL/dataset_FLclient.json",
+  "ckpt_dir": "models"
+}
