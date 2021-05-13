@@ -1,8 +1,0 @@
-{
-    "DATA_ROOT": "/data_4FL/",
-    "DATASET_JSON": "/data_4FL/dataset_FLclient.json",
-    "PROCESSING_TASK": "segmentation",
-    "MMAR_EVAL_OUTPUT_PATH": "eval",
-    "MMAR_CKPT_DIR": "models",
-    "PRETRAIN_WEIGHTS_FILE": "/var/tmp/resnet50_weights_tf_dim_ordering_tf_kernels.h5"
-}

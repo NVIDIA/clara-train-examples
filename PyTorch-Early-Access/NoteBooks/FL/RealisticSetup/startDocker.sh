@@ -39,8 +39,8 @@ extraFlag="-it "
 #cmd2run="/bin/bash"
 cmd2run="jupyter lab /claraDevDay --ip 0.0.0.0 --port 8888 --allow-root --no-browser"
 
-extraFlag=${extraFlag}" -p "${jnotebookPort}":8888"
-#extraFlag=${extraFlag}" --net=host "
+#extraFlag=${extraFlag}" -p "${jnotebookPort}":8888"
+extraFlag=${extraFlag}" --net=host "
 #extraFlag=${extraFlag}" -u $(id -u):$(id -g) -v /etc/passwd:/etc/passwd -v /etc/group:/etc/group "
 
 #--shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \
@@ -49,6 +49,7 @@ docker run --rm ${extraFlag} \
   --gpus ${GPU_IDs} \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ${PWD}/../../:/claraDevDay/ \
+  -e HOST_CLARA_DEVDAY=${PWD}/../../ \
   -w /claraDevDay/scripts \
   --runtime=nvidia \
   --ipc=host \

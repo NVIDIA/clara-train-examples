@@ -1,6 +1,5 @@
 {
   "format_version": 1,
-
     "servers": [
         {
             "name": "spleen_segmentation"
@@ -8,34 +7,14 @@
     ],
     "client": {
         "outbound_filters": [
-          {
-              "path": "medl.apps.fed_learn.client.metadata_generator.IteratorNumberGenerator",
-              "args": {
-                  "field": "n_iter"
-              }
-          },
-          {
-              "path": "medl.apps.fed_learn.client.metadata_generator.BestMetricGenerator",
-              "args": {
-                  "field": "best_validation_metric"
-              }
-          },
-          {
-              "name": "PercentilePrivacy",
-              "args": {
-                 "percentile": 75,
-                 "gamma": 50
-              }
-          }
         ],
         "inbound_filters": [
         ]
     },
   "client_trainer": {
     "path": "medl.apps.fed_learn.trainers.client_trainer.ClientTrainer",
-    "path2": "BYOC.MyClientTrainer",
     "args": {
-        "local_epochs": 5,
+      "local_epochs": 2,
         "steps_aggregation": 0,
         "model_reader_writer": {
             "name": "PTModelReaderWriter"
@@ -44,6 +23,14 @@
   },
   "handlers": [
   ],
+  "cross_validate": true,
+  "cross_site_validation": {
+      "is_participating": true,
   "model_validator": {
+          "path": "medl.apps.fed_learn.validators.client_validator.ClientValidator",
+          "args": {}
+      },
+      "inbound_filters": [],
+      "outbound_filters": []
     }
 }

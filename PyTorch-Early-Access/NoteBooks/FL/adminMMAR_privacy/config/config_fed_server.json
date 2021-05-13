@@ -1,6 +1,5 @@
 {
     "format_version": 1,
-
     "servers": [
         {
             "name": "spleen_segmentation",
@@ -34,7 +33,7 @@
         "args": {
           "exclude_vars": "dummy",
           "model": {
-            "name": "UNet",
+        "path": "monai.networks.nets.unet.UNet",
             "args": {
               "dimensions": 3,
               "in_channels": 1,

@@ -21,7 +21,7 @@ jnotebookPort=$1
 GPU_IDs=$2
 #################################### check if parameters are empty
 if [[ -z  $jnotebookPort ]]; then
-    jnotebookPort=8890
+    jnotebookPort=3030
 fi
 if [[ -z  $GPU_IDs ]]; then  #if no gpu is passed
     # for all gpus use line below
