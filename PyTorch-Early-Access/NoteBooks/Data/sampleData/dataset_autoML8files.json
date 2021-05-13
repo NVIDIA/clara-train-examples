@@ -1,5 +1,5 @@
 {
-    "description": "Sample fake data to show clara train sdk capabilities used by FL MMARS",
+    "description": "Sample fake data to show clara train sdk capabilities",
     "training": [
         {
             "image": "imagesTr/spleen_8.nii.gz",
@@ -38,20 +38,6 @@
         {
             "image": "imagesTr/spleen_8.nii.gz",
             "label": "labelsTr/spleen_8.nii.gz"
-        },
-        {
-            "image": "imagesTr/spleen_8.nii.gz",
-            "label": "labelsTr/spleen_8.nii.gz"
-        },
-        {
-            "image": "imagesTr/spleen_8.nii.gz",
-            "label": "labelsTr/spleen_8.nii.gz"
-        },
-        {
-            "image": "imagesTr/spleen_8.nii.gz",
-            "label": "labelsTr/spleen_8.nii.gz"
         }
-    ],
-    "test": ["imagesTr/spleen_8.nii.gz","imagesTr/spleen_8.nii.gz"]
-
+    ]
 }

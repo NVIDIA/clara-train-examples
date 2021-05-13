@@ -21,8 +21,8 @@ echo removing dir ${AUTOML_DIR_NAME}
 rm -R $MMAR_ROOT/automl/${AUTOML_DIR_NAME}
 
 #WORKERS="0:0:1:1"  # for 4 workers and 2 gpus (wroker 0, 1 share gpu0 while worker 2,3 share gpu 1)
-WORKERS="0:1:2:3" # for 4 workers and 4 gpus
-#WORKERS="0:0:0:0:0:0:0:0"  # for 8 workers sharing 1 gpu
+#WORKERS="0:1:2:3" # for 4 workers and 4 gpus
+WORKERS="0:0:0:0:0:0:0:0"  # for 8 workers sharing 1 gpu
 
 python -u -m medl.apps.automl.train \
     -m $MMAR_ROOT \
