@@ -7,8 +7,8 @@ services:
     hostname: claratrain
     ##### to build image with GPU dashboard
     build:
-      context: ./dockerWGPUDashboardPlugin/         # Project root
-      dockerfile: ./Dockerfile   # Relative to context
+      context: ./dockerWGPUDashboardPlugin/    # Project root
+      dockerfile: ./Dockerfile                 # Relative to context
     image: clara-train-nvdashboard:v4.0-qa11
     ##### only
 #    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa10
