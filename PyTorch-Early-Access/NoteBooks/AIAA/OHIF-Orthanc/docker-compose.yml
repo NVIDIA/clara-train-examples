@@ -5,13 +5,7 @@ services:
   claratrain:
     container_name: claradevday-pt
     hostname: claratrain
-    ##### to build image with GPU dashboard
-#    build:
-#      context: ../../scripts/docker/         # Project root
-#      dockerfile: ./Dockerfile   # Relative to context
-#    image: clara-train-nvdashboard:v4.0-21-02-qa4
-    ##### only
-    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-21-02-qa6
+    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa11
     depends_on:
       - tritonserver
     ports:
@@ -85,7 +79,8 @@ services:
       - ./nginx/config/nginx-selfsigned.key:/usr/certs/server.key:ro
 #############################################################
   orthanc:
-    image: jodogne/orthanc-plugins:1.9.1
+    image: jodogne/orthanc-plugins:1.9.1 # Orthanc docker image with plugins
+#    image: jodogne/orthanc:1.9.1  # without plugins ohif won't work with this
     container_name: aiaa-orthanc
     hostname: orthanc
     command: "/etc/orthanc --verbose"
