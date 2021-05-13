@@ -17,8 +17,7 @@
       "out_channels": 2,
       "channels": [16, 32, 64, 128, 256],
       "strides": [2, 2, 2, 2],
-      "num_res_units": 2,
-      "norm": "batch"
+      "num_res_units": 2
     }
     }
   ],
@@ -104,14 +103,6 @@
       "rank": 0,
       "args": {
         "output_transform": "lambda x: None"
-      }
-    },
-    {
-      "name": "SegmentationSaver",
-      "args": {
-        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}",
-        "batch_transform": "lambda x: x['image_meta_dict']",
-        "output_transform": "lambda x: x['pred']"
       }
     },
     {
