@@ -8,7 +8,7 @@
             "wait_after_min_clients": 10,
             "heart_beat_timeout": 600,
             "start_round": 0,
-            "num_rounds": 10
+            "num_rounds": 2
         }
     ],
     "aggregator":
