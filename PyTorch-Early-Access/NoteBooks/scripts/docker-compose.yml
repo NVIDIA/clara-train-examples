@@ -9,9 +9,9 @@ services:
     build:
       context: ./dockerWGPUDashboardPlugin/    # Project root
       dockerfile: ./Dockerfile                 # Relative to context
-    image: clara-train-nvdashboard:v4.0-qa11
+    image: clara-train-nvdashboard:v4.0
     ##### only
-#    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa10
+#    image: nvcr.io/nvstaging/clara/clara-train-sdk:v4.0
     depends_on:
       - tritonserver
     ports:
