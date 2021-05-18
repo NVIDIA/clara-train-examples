@@ -16,8 +16,8 @@
                 "model.2.1.conv.unit0.conv.weight"
               ],
               "aggregation_weights": {
-                "client1":  0.4,
-                "client2":  0.6
+                "client1":  1.0,
+                "client2":  1.0
               }
             }
           }
