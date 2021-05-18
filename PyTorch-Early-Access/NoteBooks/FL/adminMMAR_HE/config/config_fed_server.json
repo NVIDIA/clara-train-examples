@@ -1,6 +1,5 @@
 {
     "format_version": 1,
-
     "servers": [
         {
             "name": "spleen_segmentation",
@@ -14,13 +13,13 @@
     ],
     "aggregator":
       {
-        "path": "flare.experimental.homomorphic_encryption.he_intime_accumulate_model_aggregator.HEInTimeAccumulateWeightedAggregator"
+        "path": "nvflare.experimental.homomorphic_encryption.he_intime_accumulate_model_aggregator.HEInTimeAccumulateWeightedAggregator"
       },
     "outbound_filters": [],
     "inbound_filters": [],
     "model_persistor":
     {
-        "path": "flare.experimental.homomorphic_encryption.he_pt_file_model_persistor.HEPTFileModelPersistor",
+        "path": "nvflare.experimental.homomorphic_encryption.he_pt_file_model_persistor.HEPTFileModelPersistor",
         "args": {
           "exclude_vars": "dummy",
           "model": {
@@ -37,7 +36,7 @@
         }
     },
     "shareable_generator": {
-      "path": "flare.experimental.homomorphic_encryption.he_model_shareable_generator.HEModelShareableGenerator"
+      "path": "nvflare.experimental.homomorphic_encryption.he_model_shareable_generator.HEModelShareableGenerator"
     },
     "handlers":
     [

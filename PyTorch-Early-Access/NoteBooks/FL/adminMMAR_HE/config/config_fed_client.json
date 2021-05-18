@@ -8,7 +8,7 @@
     "client": {
         "outbound_filters": [
           {
-            "path": "flare.experimental.homomorphic_encryption.he_model_encryptor.HEModelEncryptor",
+            "path": "nvflare.experimental.homomorphic_encryption.he_model_encryptor.HEModelEncryptor",
             "args": {
               "encrypt_layers": [
                 "model.0.conv.unit0.conv.weight",
@@ -16,15 +16,15 @@
                 "model.2.1.conv.unit0.conv.weight"
               ],
               "aggregation_weights": {
-                "client1":  0.4,
-                "client2":  0.6
+                "client1":  1.0,
+                "client2":  1.0
               }
             }
           }
         ],
         "inbound_filters": [
           {
-            "path": "flare.experimental.homomorphic_encryption.he_model_decryptor.HEModelDecryptor"
+            "path": "nvflare.experimental.homomorphic_encryption.he_model_decryptor.HEModelDecryptor"
           }
         ]
     },
@@ -34,7 +34,7 @@
       "local_epochs": 2,
       "steps_aggregation": 0,
       "model_reader_writer": {
-          "path": "flare.experimental.homomorphic_encryption.he_pt_model_reader_writer.HEPTModelReaderWriter"
+          "path": "nvflare.experimental.homomorphic_encryption.he_pt_model_reader_writer.HEPTModelReaderWriter"
       }
     }
   },
