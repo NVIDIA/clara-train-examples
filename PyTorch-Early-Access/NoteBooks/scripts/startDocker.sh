@@ -2,8 +2,8 @@
 
 # SPDX-License-Identifier: Apache-2.0
 
-DOCKER_IMAGE=nvcr.io/ea-nvidia-clara-train/clara-train-sdk:v4.0-EA2
-DOCKER_IMAGE=nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa9
+#DOCKER_IMAGE=clara-train-nvdashboard:v4.0
+DOCKER_IMAGE=nvcr.io/nvstaging/clara/clara-train-sdk:v4.0
 
 DOCKER_Run_Name=claradevday-pt
 
@@ -12,7 +12,7 @@ GPU_IDs=$2
 AIAA_PORT=$3
 #################################### check if parameters are empty
 if [[ -z  $jnotebookPort ]]; then
-    jnotebookPort=8890
+    jnotebookPort=3030
 fi
 if [[ -z  $GPU_IDs ]]; then  #if no gpu is passed
     # for all gpus use line below
@@ -22,10 +22,7 @@ if [[ -z  $GPU_IDs ]]; then  #if no gpu is passed
     # for specific gpus as gpu#0 and gpu#2 use line below
 #    GPU_IDs='"device=1,2,3"'
 fi
-if [[ -z  $AIAA_PORT ]]; then
-    AIAA_PORT=5000
-fi
-#################################### check if name is used then exit
+#################################### check if name is used then attache to it
 docker ps -a|grep ${DOCKER_Run_Name}
 dockerNameExist=$?
 if ((${dockerNameExist}==0)) ;then
@@ -36,19 +33,20 @@ if ((${dockerNameExist}==0)) ;then
 fi
 
 echo -----------------------------------
-echo starting docker for ${DOCKER_IMAGE} using GPUS ${GPU_IDs} jnotebookPort ${jnotebookPort} and AIAA port ${AIAA_PORT}
+echo starting docker for ${DOCKER_IMAGE} using GPUS ${GPU_IDs} jnotebookPort ${jnotebookPort}
 echo -----------------------------------
 
-extraFlag="-it "
-cmd2run="/bin/bash"
+if true; then # immediately start Jupyter
+  extraFlag="-d "
+  cmd2run="jupyter lab /claraDevDay --ip 0.0.0.0 --port 8888 --allow-root --no-browser"
+else # run interactively
+  extraFlag="-it "
+  cmd2run="/bin/bash"
+fi
 
-extraFlag=${extraFlag}" -p "${jnotebookPort}":8888 -p "${AIAA_PORT}":5000"
-#extraFlag=${extraFlag}" -p "${jnotebookPort}":8888 -p 443:443 -p 5000:5000 -p 5005:5005 -p 5006:5006 "
+extraFlag=${extraFlag}" -p "${jnotebookPort}":8888 -p "3031":5000"
 #extraFlag=${extraFlag}" --net=host "
 #extraFlag=${extraFlag}" -u $(id -u):$(id -g) -v /etc/passwd:/etc/passwd -v /etc/group:/etc/group "
-
-#echo starting please run "./installDashBoardInDocker.sh" to install the lab extensions then start the jupeter lab
-#echo once completed use web browser with token given yourip:${jnotebookPort} to access it
 
   #--shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \
 docker run --rm ${extraFlag} \
@@ -62,4 +60,11 @@ docker run --rm ${extraFlag} \
   ${DOCKER_IMAGE} \
   ${cmd2run}
 
-echo ------------------ exited from docker image
+for i in {1..6}
+do
+   echo ---wait $i
+   sleep 1
+done
+docker logs claradevday-pt 2>&1 |grep token= | head -2
+
+#echo ------------------ exited from docker image

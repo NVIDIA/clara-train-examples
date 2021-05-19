@@ -8,31 +8,23 @@
     "client": {
         "outbound_filters": [
           {
-              "path": "medl.apps.fed_learn.client.metadata_generator.IteratorNumberGenerator",
-              "args": {
-                  "field": "n_iter"
-              }
-          },
-          {
-              "path": "medl.apps.fed_learn.client.metadata_generator.BestMetricGenerator",
-              "args": {
-                  "field": "best_validation_metric"
-              }
-          },
-          {
-            "path": "flare.experimental.homomorphic_encryption.he_model_encryptor.HEModelEncryptor",
+            "path": "nvflare.experimental.homomorphic_encryption.he_model_encryptor.HEModelEncryptor",
             "args": {
               "encrypt_layers": [
                 "model.0.conv.unit0.conv.weight",
                 "model.1.submodule.1.submodule.1.submodule.2.0.conv.weight",
                 "model.2.1.conv.unit0.conv.weight"
-              ]
+              ],
+              "aggregation_weights": {
+                "client1":  1.0,
+                "client2":  1.0
+              }
             }
           }
         ],
         "inbound_filters": [
           {
-            "path": "flare.experimental.homomorphic_encryption.he_model_decryptor.HEModelDecryptor"
+            "path": "nvflare.experimental.homomorphic_encryption.he_model_decryptor.HEModelDecryptor"
           }
         ]
     },
@@ -40,22 +32,28 @@
     "path": "medl.apps.fed_learn.trainers.client_trainer.ClientTrainer",
     "args": {
       "local_epochs": 2,
-        "steps_aggregation": 0,
-        "model_reader_writer": {
-            "name": "PTModelReaderWriter"
-        }
+      "steps_aggregation": 0,
+      "model_reader_writer": {
+          "path": "nvflare.experimental.homomorphic_encryption.he_pt_model_reader_writer.HEPTModelReaderWriter"
+      }
     }
   },
   "handlers": [
   ],
   "cross_validate": true,
   "cross_site_validation": {
-      "is_participating": true,
-  "model_validator": {
-          "path": "medl.apps.fed_learn.validators.client_validator.ClientValidator",
-          "args": {}
-      },
-      "inbound_filters": [],
-      "outbound_filters": []
-    }
+    "is_participating": true,
+    "model_validator": {
+      "path": "medl.apps.fed_learn.validators.client_validator.ClientValidator",
+      "args": {}
+    },
+    "inbound_filters": [
+      {
+        "path": "medl.apps.fed_learn.filters.he_eval_decryptor.HEEvalDecryptor",
+        "args": {
+        }
+      }
+    ],
+    "outbound_filters": []
+  }
 }

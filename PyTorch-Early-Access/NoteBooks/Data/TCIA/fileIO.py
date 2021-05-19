@@ -70,7 +70,8 @@ class DataJson():
     def write2file(self, filename):
         with open(filename, 'w') as outfile:
             json.dump(self._jsonData, outfile)
-
+        print("written file to disk with {} items in Training".format(self.getNumItem()))
+        # print("and {} items in validation".format(self.getNumItem("validation")))
     def getJson(self):
         return self._jsonData
     def getNumItem(self,dictItem="training"):

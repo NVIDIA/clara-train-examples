@@ -107,14 +107,6 @@
       }
     },
     {
-      "name": "SegmentationSaver",
-      "args": {
-        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}",
-        "batch_transform": "lambda x: x['image_meta_dict']",
-        "output_transform": "lambda x: x['pred']"
-      }
-    },
-    {
       "name": "MetricsSaver",
       "args": {
         "save_dir": "{MMAR_EVAL_OUTPUT_PATH}",

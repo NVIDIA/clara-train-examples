@@ -17,30 +17,29 @@
       "out_channels": 2,
       "channels": [16, 32, 64, 128, 256],
       "strides": [2, 2, 2, 2],
-      "num_res_units": 2,
-      "norm": "batch"
+      "num_res_units": 2
     }
     }
   ],
   "pre_transforms": [
     {
         "name": "LoadImaged",
-      "args": {
-          "keys": ["image", "label"]
-      }
-    },
-    {
-        "name": "EnsureChannelFirstd",
-      "args": {
+        "args": {
           "keys": ["image", "label"]
       }
     },
     {
         "name": "Spacingd",
-      "args": {
+        "args": {
             "keys": ["image", "label"],
             "pixdim": [1.0, 1.0, 1.0],
             "mode":["bilinear", "nearest"]
+      }
+    },
+    {
+        "name": "EnsureChannelFirstd",
+        "args": {
+          "keys": ["image", "label"]
       }
     },
     {
@@ -58,7 +57,7 @@
       "name": "CropForegroundd",
       "args": {
           "keys": ["image", "label"],
-        "source_key": "image"
+          "source_key": "image"
       }
     },
     {
@@ -104,25 +103,6 @@
       "rank": 0,
       "args": {
         "output_transform": "lambda x: None"
-      }
-    },
-    {
-      "name": "SegmentationSaver",
-      "args": {
-        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}",
-        "batch_transform": "lambda x: x['image_meta_dict']",
-        "output_transform": "lambda x: x['pred']"
-      }
-    },
-    {
-      "name": "MetricsSaver",
-      "args": {
-        "save_dir": "{MMAR_EVAL_OUTPUT_PATH}",
-        "metrics": ["val_mean_dice", "val_acc"],
-        "metric_details": ["val_mean_dice"],
-        "batch_transform": "lambda x: x['image_meta_dict']",
-        "summary_ops": "*",
-        "save_rank": 0
       }
     }
   ],

@@ -1,6 +1,5 @@
 {
     "format_version": 1,
-
     "servers": [
         {
             "name": "spleen_segmentation",
@@ -14,14 +13,8 @@
     ],
     "aggregator":
       {
-        "name": "InTimeAccumulateWeightedAggregator",
+        "path": "BYO_Aggregator.MyJustInTimeAggregator",
         "args": {
-          "aggregation_weights":
-              {
-                "client0": 1,
-                "client1": 1.5,
-                "client2": 0.8
-              }
         }
       },
     "outbound_filters": [
@@ -34,7 +27,7 @@
         "args": {
           "exclude_vars": "dummy",
           "model": {
-            "name": "UNet",
+        "path": "monai.networks.nets.unet.UNet",
             "args": {
               "dimensions": 3,
               "in_channels": 1,
@@ -52,7 +45,7 @@
     },
   "handlers": [
     {
-      "path": "flare.components.handlers.intime_model_selection_handler.IntimeModelSelectionHandler",
+      "path": "nvflare.components.handlers.intime_model_selection_handler.IntimeModelSelectionHandler",
       "args": {}
     }
   ]
