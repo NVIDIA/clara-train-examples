@@ -22,7 +22,7 @@ if [[ -z  $GPU_IDs ]]; then  #if no gpu is passed
     # for specific gpus as gpu#0 and gpu#2 use line below
 #    GPU_IDs='"device=1,2,3"'
 fi
-#################################### check if name is used then exit
+#################################### check if name is used then attache to it
 docker ps -a|grep ${DOCKER_Run_Name}
 dockerNameExist=$?
 if ((${dockerNameExist}==0)) ;then
@@ -36,10 +36,13 @@ echo -----------------------------------
 echo starting docker for ${DOCKER_IMAGE} using GPUS ${GPU_IDs} jnotebookPort ${jnotebookPort}
 echo -----------------------------------
 
-extraFlag="-d "
-#extraFlag="-it "
-#cmd2run="/bin/bash"
-cmd2run="jupyter lab /claraDevDay --ip 0.0.0.0 --port 8888 --allow-root --no-browser"
+if true; then # immediately start Jupyter
+  extraFlag="-d "
+  cmd2run="jupyter lab /claraDevDay --ip 0.0.0.0 --port 8888 --allow-root --no-browser"
+else # run interactively
+  extraFlag="-it "
+  cmd2run="/bin/bash"
+fi
 
 extraFlag=${extraFlag}" -p "${jnotebookPort}":8888 -p "3031":5000"
 #extraFlag=${extraFlag}" --net=host "

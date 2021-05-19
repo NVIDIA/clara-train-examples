@@ -60,8 +60,7 @@ This NoteBooks contain:
 ## 1. Install cuda nvidia drivers / Trouble Shooting Cuda
 
 You should skip this step, if you already have cuda and nvida driver. 
-To check simply run
-`nvidia-smi`  
+To check simply run `nvidia-smi`  
 
 If you don't have nvidia drivers / cuda installed or you do get a cuda lib mismatch when running `nvidia-smi`
 as 
@@ -100,45 +99,53 @@ sudo installDocker.sh
 ```
 ## 3 Start Docker image 
 To begin, go into the scripts folder
-          
-       cd scripts
+```       
+cd scripts
+```
 from here you can just start either:
 1. `./startClaraTrainNoteBooks.sh` to start docker compose of Triton used by AIAA and clara train container
 2. Only clara train container for training, AutoML and FL workflow
 
 ## 3.1 Start Docker-Compose 
 run command below which will pull and start the latest clara train SDK and Triton server for AIAA.
- 
-    ./startClaraTrainNoteBooks.sh
-
+ ```
+./startClaraTrainNoteBooks.sh
+```
 You can now go to your browser on port 3030 and use the token printed out as below
-
-    [I 23:47:18.654 LabApp] http://claratrain:8888/?token=3e5ef35f982ea5a3e432322b07b6d33b5fc51a4fcb0ffa88
-    [I 23:47:18.654 LabApp]  or http://127.0.0.1:8888/?token=3e5ef35f982ea5a3e432322b07b6d33b5fc51a4fcb0ffa88
-
+```
+[I 23:47:18.654 LabApp] http://claratrain:8888/?token=3e5ef35f982ea5a3e432322b07b6d33b5fc51a4fcb0ffa88
+[I 23:47:18.654 LabApp]  or http://127.0.0.1:8888/?token=3e5ef35f982ea5a3e432322b07b6d33b5fc51a4fcb0ffa88
+```
 #### 3.1.1 Customize docker compose 
 You should edit the docker-compose.yml file in case you want to:
 - start jupter lab on different port than 3030
 - change the AIAA port 
 as 
 ```
-    ports:
-      - "3030:8888"  # Jupyter lab port 
-      - "3031:5000"  # AIAA port
+ports:
+  - "3030:8888"  # Jupyter lab port 
+  - "3031:5000"  # AIAA port
 ```
 
 To expose certain gpus to Triton please uncomment lines at the end of the docker-compose file 
 
 ```
-      capabilities: [ gpu ]
-      # To specify certain GPU uncomment line below
-      #device_ids: ['0,1']
+capabilities: [ gpu ]
+# To specify certain GPU uncomment line below
+#device_ids: ['0,1']
 ```
-
-Now you should be inside the docker as see output similar to
-<br>
-<img src="screenShots/startDocker.png" alt="drawing" width="600"/>
-
+- Install gpu monitoring tools for jupyter lab.
+You can install gpu monitoring tools (see step 5) by changing the line 
+```
+##### use vanilla clara train docker 
+#image: nvcr.io/nvstaging/clara/clara-train-sdk:v4.0
+##### to build image with GPU dashboard inside jupyter lab 
+build:
+  context: ./dockerWGPUDashboardPlugin/    # Project root
+  dockerfile: ./Dockerfile                 # Relative to context
+image: clara-train-nvdashboard:v4.0
+``` 
+ 
 ### 3.2 Start Docker only
 If you don't plan to use AIAA then only running clara train container without triton is sufficient. 
 For this you need to run

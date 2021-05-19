@@ -5,7 +5,7 @@ services:
   claratrain:
     container_name: claradevday-pt
     hostname: claratrain
-    image: nvcr.io/nvidian/dlmed/clara-train-sdk:v4.0-qa11
+    image: nvcr.io/nvstaging/clara/clara-train-sdk:v4.0
     depends_on:
       - tritonserver
     ports:

@@ -14,8 +14,6 @@
 
 
 # Stage 1: Build the application
-# docker build -t ohif/viewer:latest .
-#FROM node:11.2.0-slim as builder
 FROM node:12.20.2-slim as builder
 
 RUN mkdir /usr/src/app
@@ -28,6 +26,8 @@ RUN apt-get update && \
     apt-get install -y git
 #clone repo instead copy files below
 RUN git clone https://github.com/SachidanandAlle/Viewers.git .
+#revert to commit in December to avoid OHIF master branch which introduced the annotartion viewing bug
+RUN git checkout 922561a5a477079f4fc9a9194ed93f27e22768c7
 
 # Run the install before copying the rest of the files
 RUN yarn config set workspaces-experimental true

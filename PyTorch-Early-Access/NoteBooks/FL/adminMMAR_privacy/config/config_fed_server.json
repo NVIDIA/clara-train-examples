@@ -13,14 +13,8 @@
     ],
     "aggregator":
       {
-        "name": "InTimeAccumulateWeightedAggregator",
+        "path": "BYO_Aggregator.MyJustInTimeAggregator",
         "args": {
-          "aggregation_weights":
-              {
-                "client0": 1,
-                "client1": 1.5,
-                "client2": 0.8
-              }
         }
       },
     "outbound_filters": [
