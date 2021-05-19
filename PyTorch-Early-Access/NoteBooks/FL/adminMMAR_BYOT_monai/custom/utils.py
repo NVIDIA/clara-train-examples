@@ -6,9 +6,9 @@ from typing import Dict
 
 import numpy as np
 import torch
-from flare.apis.fl_constant import FLConstants, ShareableKey, ShareableValue
-from flare.apis.fl_context import FLContext
-from flare.apis.shareable import Shareable
+from nvflare.apis.fl_constant import FLConstants, ShareableKey, ShareableValue
+from nvflare.apis.fl_context import FLContext
+from nvflare.apis.shareable import Shareable
 from ignite.engine import Engine, Events
 from torch.optim import Optimizer
 

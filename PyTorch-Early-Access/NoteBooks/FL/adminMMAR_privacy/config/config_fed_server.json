@@ -51,7 +51,7 @@
     },
   "handlers": [
     {
-      "path": "flare.components.handlers.intime_model_selection_handler.IntimeModelSelectionHandler",
+      "path": "nvflare.components.handlers.intime_model_selection_handler.IntimeModelSelectionHandler",
       "args": {}
     }
   ]
