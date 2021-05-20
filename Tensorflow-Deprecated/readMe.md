@@ -83,6 +83,8 @@ Click and hold on `GPU Utilization` tab and drag it to the right most area of sc
 It will dock the tab on top of the notebook. 
 Follow the same procedure with `GPU Memory` tab and docker it on the bottom right of screen. 
 The result should be similar to
-![result](screenShots/result.png)
+
+![sd](screenShots/result.png)
+
 Now we can see GPU Utilization and GPU Memory while we run through the notebooks.
 
