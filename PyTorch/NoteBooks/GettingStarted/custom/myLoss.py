@@ -29,7 +29,8 @@ class MyDiceLoss(_Loss):
     def __init__(self,include_background: bool = True,to_onehot_y: bool = False,sigmoid: bool = False,softmax: bool = False,
         other_act: Optional[Callable] = None, squared_pred: bool = False, jaccard: bool = False,
         reduction: Union[LossReduction, str] = LossReduction.MEAN,smooth_nr: float = 1e-5,smooth_dr: float = 1e-5,batch: bool = False,
-    ) -> None:
+                 # label_weights: Optional[Union[Sequence[float], float, int, torch.Tensor]] = None
+                 ) -> None:
         print(f" ####################-------------------- Triggering your own Loss code ")
         print(f" --------------------#################### You can change this as you see fit")
         """
@@ -77,6 +78,11 @@ class MyDiceLoss(_Loss):
         self.smooth_nr = float(smooth_nr)
         self.smooth_dr = float(smooth_dr)
         self.batch = batch
+        # uncomment lines below to enable label weights
+        # self.label_weights=label_weights
+        # if self.label_weights is not None:
+        #     self.label_weights=[x / sum(self.label_weights) for x in self.label_weights]
+        #     print ("====== AEH applying label weights {} refactored as {}".format(label_weights,self.label_weights))
 
     def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
         """
@@ -125,6 +131,13 @@ class MyDiceLoss(_Loss):
             reduce_axis = [0] + reduce_axis
 
         intersection = torch.sum(target * input, dim=reduce_axis)
+
+        ### uncoment lines below to enable label weights
+        # if self.label_weights is not None:  # add wights to labels
+        #     bs=intersection.shape[0]
+        #     w = torch.tensor(self.label_weights, dtype=torch.float32,device=torch.device('cuda:0'))
+        #     w= w.repeat(bs, 1) ## change size to [BS, Num of classes ]
+        #     intersection = w* intersection
 
         if self.squared_pred:
             target = torch.pow(target, 2)

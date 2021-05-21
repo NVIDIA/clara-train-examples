@@ -103,7 +103,7 @@
         }
       },
       {
-        "path": "myTransformation.RandAdditiveNoised",
+        "path": "myTransformation.MyRandAdditiveNoised",
         "args": {
           "keys": "image",
           "prob": 0.5,

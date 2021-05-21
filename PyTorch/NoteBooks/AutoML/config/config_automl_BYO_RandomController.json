@@ -17,9 +17,6 @@
       "name": "MMARStatsHandler"
     },
     {
-      "name": "MMARTensorboardHandler"
-    },
-    {
       "path": "myAutoMLController.MyHandler"
     }
 
