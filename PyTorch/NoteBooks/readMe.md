@@ -28,8 +28,8 @@ There are multiple notebooks showing:
     3. [Client Notebook](FL/Client.ipynb) 
     4. [Administration of FL experiment](FL/Admin.ipynb) 
     5. [Bring your own Component to FL](FL/Admin_BYOC.ipynb) 
-    6. [Bring your own Trainer to FL](FL/FLBYOTrainer.ipynb) <span style="color:red">(New in V4)</span>
-    7. [Homomorphic_Encryption](FL/Homomorphic_Encryption.ipynb) <span style="color:red">(New in V4)</span>
+    6. [Homomorphic_Encryption](FL/Homomorphic_Encryption.ipynb) <span style="color:red">(New in V4)</span>
+    7. [Bring your own Trainer to FL](FL/FLBYOTrainer.ipynb) <span style="color:red">(New in V4)</span>
 5. AutoML
     1. [AutoML Basics](AutoML/AutoML.ipynb)
     2. [AutoML BYOC](AutoML/AutoML_BYOC.ipynb)
@@ -138,7 +138,7 @@ capabilities: [ gpu ]
 You can install gpu monitoring tools (see step 5) by changing the line 
 ```
 ##### use vanilla clara train docker 
-#image: nvcr.io/nvstaging/clara/clara-train-sdk:v4.0
+#image: nvcr.io/nvidia/clara-train-sdk:v4.0
 ##### to build image with GPU dashboard inside jupyter lab 
 build:
   context: ./dockerWGPUDashboardPlugin/    # Project root

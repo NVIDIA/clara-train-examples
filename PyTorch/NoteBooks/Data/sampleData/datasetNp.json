@@ -1,0 +1,57 @@
+{
+    "description": "Sample fake data to show clara train sdk capabilities used by FL MMARS",
+    "training": [
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        }
+    ],
+    "validation": [
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        },
+        {
+            "image": "imagesTr/spleen_8.npy",
+            "label": "labelsTr/spleen_8.npy"
+        }
+    ],
+    "test": ["imagesTr/spleen_8.npy","imagesTr/spleen_8.npy"]
+
+}

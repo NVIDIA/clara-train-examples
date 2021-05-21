@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
-FROM nvcr.io/nvstaging/clara/clara-train-sdk:v4.0
+FROM nvcr.io/nvidia/clara-train-sdk:v4.0
 
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip

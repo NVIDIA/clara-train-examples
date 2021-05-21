@@ -6,7 +6,6 @@ clear
 echo running cmd $0 $1 $2 $3
 CONFIG_FILE_NAME=config_train_Unet.json  # need to pass different names
 GPU2USE=$1
-#DATASET_JSON=$2
 
 my_dir="$(dirname "$0")"
 . $my_dir/set_env.sh
@@ -34,4 +33,6 @@ python3 -u  -m medl.apps.evaluate \
     MMAR_TORCHSCRIPT=$MMAR_TORCHSCRIPT \
     print_conf=True \
     use_gpu=True \
-    multi_gpu=False
+    multi_gpu=False \
+    dont_load_ts_model=False \
+    dont_load_ckpt_model=True

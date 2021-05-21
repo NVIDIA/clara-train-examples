@@ -5,7 +5,7 @@ services:
   claratrain:
     container_name: claradevday-pt
     hostname: claratrain
-    image: nvcr.io/nvstaging/clara/clara-train-sdk:v4.0
+    image: nvcr.io/nvidia/clara-train-sdk:v4.0
     depends_on:
       - tritonserver
     ports:
@@ -94,5 +94,5 @@ services:
       #- ./config/orthancSachi.json:/etc/orthanc/orthanc.json:ro
       # Persist data
       #- /raid/users/aharouni/dockers/orthanc/orthanc-db/:/var/lib/orthanc/db/
-      - /raid/users/aharouni/dockers/claraTrain/claraTrainExamples/PyTorch-Early-Access/NoteBooks/AIAA/OHIF-Orthanc/data/orthanc-db:/var/lib/orthanc/db/
+      - /raid/users/aharouni/dockers/claraTrain/claraTrainExamples/PyTorch/NoteBooks/AIAA/OHIF-Orthanc/data/orthanc-db:/var/lib/orthanc/db/
       #- ${ConfigLocalPath}/orthanc-db/:/var/lib/orthanc/db/

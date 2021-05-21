@@ -25,9 +25,17 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y git
 #clone repo instead copy files below
-RUN git clone https://github.com/SachidanandAlle/Viewers.git .
+#########################################
+RUN git clone https://github.com/OHIF/Viewers.git .
+COPY /src/Viewers/ .
+##########################
+#RUN git clone https://github.com/SachidanandAlle/Viewers.git .
 #revert to commit in December to avoid OHIF master branch which introduced the annotartion viewing bug
-RUN git checkout 922561a5a477079f4fc9a9194ed93f27e22768c7
+#RUN git checkout 922561a5a477079f4fc9a9194ed93f27e22768c7 #did not work
+#RUN git checkout efde6ed20ec495e5cb3f636aafc01e0c1a4e32df  #did not work either
+#RUN git checkout 922561a5a477079f4fc9a9194ed93f27e22768c7 #no luck
+#RUN git checkout 1248475776834f0626a21541b312e3ad1683c9e9  #first commint
+#########################################
 
 # Run the install before copying the rest of the files
 RUN yarn config set workspaces-experimental true

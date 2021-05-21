@@ -29,7 +29,7 @@ class RandAdditiveNoise(Randomizable, Transform):
 
 ################################################################################################################
 
-class RandAdditiveNoised(Randomizable, MapTransform):
+class MyRandAdditiveNoised(Randomizable, MapTransform):
     def __init__(self, keys: KeysCollection, prob: float = 0.5, max_add: float = 1.0
                  ) -> None:
         super(Randomizable, self).__init__(keys)

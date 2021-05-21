@@ -6,12 +6,12 @@ services:
     container_name: claradevday-pt
     hostname: claratrain
     ##### use vanilla clara train docker
-    #image: nvcr.io/nvstaging/clara/clara-train-sdk:v4.0
+    image: nvcr.io/nvidia/clara-train-sdk:v4.0
     ##### to build image with GPU dashboard inside jupyter lab
-    build:
-      context: ./dockerWGPUDashboardPlugin/    # Project root
-      dockerfile: ./Dockerfile                 # Relative to context
-    image: clara-train-nvdashboard:v4.0
+#    build:
+#      context: ./dockerWGPUDashboardPlugin/    # Project root
+#      dockerfile: ./Dockerfile                 # Relative to context
+#    image: clara-train-nvdashboard:v4.0
     depends_on:
       - tritonserver
     ports:
@@ -52,4 +52,4 @@ services:
             - driver: nvidia
               capabilities: [ gpu ]
               # To specify certain GPU uncomment line below
-              #device_ids: ['0,1']
+              #device_ids: ['0,3']
