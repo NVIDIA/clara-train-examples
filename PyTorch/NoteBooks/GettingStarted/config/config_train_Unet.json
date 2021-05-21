@@ -285,7 +285,7 @@
         "rank": 0,
         "args": {
           "save_dir": "{MMAR_CKPT_DIR}",
-          "save_dict": ["model"],
+          "save_dict": ["model","train_conf"],
           "save_key_metric": true
         }
       }

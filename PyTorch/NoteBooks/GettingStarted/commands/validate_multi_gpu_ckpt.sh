@@ -6,7 +6,6 @@ clear
 echo running cmd $0 $1 $2 $3
 CONFIG_FILE_NAME=config_train_Unet.json  # need to pass different names
 GPU2USE=$1
-#DATASET_JSON=$2
 
 my_dir="$(dirname "$0")"
 . $my_dir/set_env.sh
