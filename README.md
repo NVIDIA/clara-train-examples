@@ -1,5 +1,4 @@
 # Clara Train Examples
-____
 ### Overview of Clara Train
 
 Clara Train SDK is a domain optimized developer application framework that includes APIs for AI-Assisted Annotation, making any medical viewer AI capable and v4.0 enables a MONAI based training framework with pre-trained models to start AI development with techniques such as Transfer Learning, Federated Learning, and AutoML.
