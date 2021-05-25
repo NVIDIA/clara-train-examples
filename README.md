@@ -4,7 +4,7 @@ ____
 
 Clara Train SDK is a domain optimized developer application framework that includes APIs for AI-Assisted Annotation, making any medical viewer AI capable and v4.0 enables a MONAI based training framework with pre-trained models to start AI development with techniques such as Transfer Learning, Federated Learning, and AutoML.
 
-Clara Train has upgraded its underlying infrastructure from Tensorflow to MONAI. [MONAI](https://www.monai.io) is an open-source, PyTorch-based framework that provides domain-optimized foundational capabilities for healthcare.
+Clara Train has upgraded its underlying infrastructure from Tensorflow to MONAI. [MONAI](https://monai.io/) is an open-source, PyTorch-based framework that provides domain-optimized foundational capabilities for healthcare.
 
 This repo contains Jupyter Notebooks to help you explore the features and capabilities of Clara Train, including AI-Assisted Annotation, AutoML, and Federated Learning.
 
