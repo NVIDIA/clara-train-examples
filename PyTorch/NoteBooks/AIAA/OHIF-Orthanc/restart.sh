@@ -6,7 +6,7 @@ chmod 664 nginx/config/.htpasswd
 ./stop.sh
 sleep 2
 echo -----------------------------
-docker rmi aiaa-ohif:v4.0
+#docker rmi aiaa-ohif:v4.0
 #docker-compose build --no-cache
 sleep 2
 echo -----------------------------

@@ -393,6 +393,7 @@ export default class AIAAPanel extends Component {
       title: 'NVIDIA AIAA',
       message: 'AIAA Auto-Segmentation complete!',
       type: 'success',
+      duration: 5000,
     });
   };
 
@@ -510,6 +511,13 @@ export default class AIAAPanel extends Component {
     }
 
     await this.updateView(activeIndex, response, null, 'override', is3D ? -1 : currentPoint.z);
+
+    this.notification.show({
+        title: 'NVIDIA AIAA',
+        message: 'Deepgrow Completed ! ...\n ' ,
+        type: 'success',
+        duration: 5000,
+    });
   };
 
   /**
