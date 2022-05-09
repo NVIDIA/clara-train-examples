@@ -1,39 +1,25 @@
 # SPDX-License-Identifier: Apache-2.0
 
-FROM nvcr.io/nvidia/clara-train-sdk:v4.0
+FROM nvcr.io/nvidia/clara-train-sdk:v4.1
 
-RUN apt-get update && apt-get upgrade -y
-RUN pip install --upgrade pip
-RUN apt update
-RUN apt install -y build-essential
+# Fix for clara vis / monai label/ Down side tensorboard is gone by this update!
+RUN pip3 install --upgrade jupyterlab
+RUN pip3 install --force-reinstall itk
 
-#### jupyterlab-nvdashboard dependences (nodesj and npm installation)
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-RUN apt install -y nodejs
-##RUN mv /usr/bin/python /usr/bin/python2 # dir doesn't exist !
-RUN ln -s $(which python3) /usr/bin/python
+#install gpu dash board
+RUN pip install jupyterlab jupyterlab-nvdashboard jupyterlab_execute_time
 
-####
-#Prerequisites : JupyterLab 1.0 bokeh pynvml
-RUN pip install pynvml
-RUN pip install jupyter-server-proxy
-####
+# install clara visualizeation
+RUN pip install clara-viz clara-viz-core clara-viz-widgets
 
-### bokeh dependences
-RUN pip install Jinja2 \
-    && pip install numpy \
-    && pip install packaging \
-    && pip install pillow \
-    && pip install python-dateutil \
-    && pip install six  \
-    && pip install tornado
-RUN pip install bokeh
-RUN pip install jupyterlab
-RUN pip install jupyterlab-nvdashboard
-RUN jupyter labextension install jupyterlab-nvdashboard
+# install / upgrad dlprof
+#RUN pip install nvidia-pyindex
+#RUN pip install nvidia-dlprof
+#RUN pip install nvidia-dlprofviewer==1.8
 
-# For workshops copy content inside docker image
-#COPY ./ /claraDevDay/
+# install nvtop
+# breaks driver in the docker error: Failed to initialize NVML: Driver/library version mismatch
+#RUN apt install -y nvtop
 
 WORKDIR /claraDevDay/
 EXPOSE 8888
