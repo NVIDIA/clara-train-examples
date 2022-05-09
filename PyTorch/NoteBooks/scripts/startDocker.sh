@@ -45,8 +45,9 @@ extraFlag=${extraFlag}" -p "${jnotebookPort}":8888 -p 3031:5000"
 #extraFlag=${extraFlag}" -u $(id -u):$(id -g) -v /etc/passwd:/etc/passwd -v /etc/group:/etc/group "
 
 #For the clara viz to work
-extraFlag=${extraFlag}" -e NVIDIA_DRIVER_CAPABILITIES=graphics,video,compute,utility"
+#extraFlag=${extraFlag}" -e NVIDIA_DRIVER_CAPABILITIES=graphics,video,compute,utility"
 #--shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \
+
 docker run --rm ${extraFlag} \
   --name=${DOCKER_Run_Name} \
   --gpus ${GPU_IDs} \
