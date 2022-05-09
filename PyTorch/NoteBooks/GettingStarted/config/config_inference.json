@@ -1,4 +1,5 @@
 {
+  "CLARA_TRAIN_VERSION": "4.1.0",
   "use_gpu": true,
   "multi_gpu": false,
   "amp": true,
@@ -16,6 +17,14 @@
       "name": "EnsureChannelFirstd",
       "args": {
         "keys": ["image"]
+      }
+    },
+    {
+        "name": "Spacingd",
+        "args": {
+            "keys": ["image"],
+            "pixdim": [1.0, 1.0, 1.0],
+            "mode":["bilinear"]
       }
     },
     {
@@ -47,11 +56,15 @@
     "name": "Dataset",
     "data_list_file_path": "{DATASET_JSON}",
     "data_file_base_dir": "{DATA_ROOT}",
-    "data_list_key": "test"
+    "data_list_key": "test",
+    "args": {
+      "transform": "@pre_transforms"
+    }
   },
   "dataloader": {
     "name": "DataLoader",
     "args": {
+      "dataset": "@dataset",
       "batch_size": 1,
       "shuffle": false,
       "num_workers": 4
@@ -72,14 +85,6 @@
       "args": {
         "output_transform": "lambda x: None"
       }
-    },
-    {
-      "name": "SegmentationSaver",
-      "args": {
-        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}",
-        "batch_transform": "lambda x: x['image_meta_dict']",
-        "output_transform": "lambda x: x['pred']"
-      }
     }
   ],
   "post_transforms": [
@@ -91,6 +96,18 @@
       }
     },
     {
+      "name": "Invertd",
+      "args": {
+        "keys": "pred",
+        "transform": "@pre_transforms",
+        "orig_keys": "image",
+        "meta_keys": "pred_meta_dict",
+        "nearest_interp": false,
+        "to_tensor": true,
+        "device": "cuda"
+      }
+    },
+    {
       "name": "AsDiscreted",
       "args": {
         "keys": "pred",
@@ -98,9 +115,28 @@
         "to_onehot": true,
         "n_classes": 2
       }
+    },
+    {
+      "name": "SaveImaged",
+      "args": {
+        "keys": "pred",
+        "meta_keys": "pred_meta_dict",
+        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}",
+        "resample": false,
+        "squeeze_end_dims": true
+      }
     }
   ],
   "evaluator": {
-    "name": "SupervisedEvaluator"
+      "name": "SupervisedEvaluator",
+      "args": {
+        "device": "cuda",
+        "val_data_loader": "@dataloader",
+        "network": "@model",
+        "inferer": "@inferer",
+        "postprocessing": "@post_transforms",
+        "val_handlers": "@handlers",
+        "amp": "{amp}"
+      }
   }
 }
