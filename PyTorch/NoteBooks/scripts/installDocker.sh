@@ -114,6 +114,10 @@ ensure_nvidia_gpu_drivers_installed () {
     set -ue
 
     if [ ! -x "$(command -v nvidia-smi)" ]; then
+        echo "Missing Nvidia driver"
+        echo "please run > ubuntu-drivers devices"
+        echo "           > sudo ubuntu-drivers autoinstall   OR > sudo apt install nvidia-470  <for specific release>"
+        echo " you would need to reboot after this using > sudo reboot "
         fatal "Please install NVIDIA CUDA driver at https://developer.nvidia.com/cuda-downloads?target_os=Linux"
     else
         local driver_version=$(nvidia-smi | grep "Driver Version:" | awk '{print $6}')

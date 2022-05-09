@@ -6,12 +6,12 @@ services:
     container_name: claradevday-pt
     hostname: claratrain
     ##### use vanilla clara train docker
-    image: nvcr.io/nvidia/clara-train-sdk:v4.0
+    image: nvcr.io/nvidia/clara-train-sdk:v4.1
     ##### to build image with GPU dashboard inside jupyter lab
 #    build:
 #      context: ./dockerWGPUDashboardPlugin/    # Project root
 #      dockerfile: ./Dockerfile                 # Relative to context
-#    image: clara-train-nvdashboard:v4.0
+#    image: clara-train-nvdashboard:4.1
     depends_on:
       - tritonserver
     ports:

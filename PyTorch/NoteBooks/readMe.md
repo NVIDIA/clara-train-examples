@@ -2,48 +2,42 @@
 
 # Notebooks for Clara Train SDK 
 
-This is a set of multiple notebooks which walks you through Clara train SDK features and capabilities.  
-There are multiple notebooks showing:
-- AI Assisted Annotation
-- Domain specific examples: Digital Pathology 
-- Hyper parameter optimization with AutoML
-- Federated learning features
-- Performance gains   
+This is a set of multiple notebooks which walks you through Clara train SDK features.  
 
-# List of Notebooks
+#### Notebooks for V4.1
 
 1. Getting Started 
     1. [Getting Started](GettingStarted/GettingStarted.ipynb)
     1. [Bring your own component BYOC](GettingStarted/BYOC.ipynb)
 2. AI Assisted Annotation (AIAA):
     1. [Basics](AIAA/AIAA.ipynb)
-    2. [Train Deepgrow (2D and 3D)](AIAA/DeepGrow.ipynb) <span style="color:red">(New in V4)</span>
-    3. [OHIF Integration](AIAA/AIAAwOHIF.ipynb) <span style="color:red">(New in V4)</span>
 3. DataSets
-    1. [Download Decathlon Dataset](Data/DownloadDecathlonDataSet.ipynb) <span style="color:red">(New in V4)</span>
-    2. [Download from National Cancer Archive](Data/TCIA/TCIADownloader.ipynb) <span style="color:red">(New in V4)</span>
-4. Federated Learning <br>
+    1. [Download Decathlon Dataset](Data/DownloadDecathlonDataSet.ipynb) 
+    2. [Download from National Cancer Archive](Data/TCIA/TCIADownloader.ipynb) 
+5. AutoML
+    1. [AutoML Basics](AutoML/AutoML.ipynb)
+
+##### Notebooks for V4.0 (to be updated to v4.1 soon)
+1. AI Assisted Annotation (AIAA):
+    2. [Train Deepgrow (2D and 3D)](AIAA/DeepGrow.ipynb) 
+    3. [OHIF Integration](AIAA/AIAAwOHIF.ipynb) 
+2. Federated Learning <br>
     1. [Federated learning](FL/FederatedLearning.ipynb) 
     2. [Provisioning Notebook](FL/Provisioning.ipynb) 
     3. [Client Notebook](FL/Client.ipynb) 
     4. [Administration of FL experiment](FL/Admin.ipynb) 
     5. [Bring your own Component to FL](FL/Admin_BYOC.ipynb) 
-    6. [Homomorphic_Encryption](FL/Homomorphic_Encryption.ipynb) <span style="color:red">(New in V4)</span>
-    7. [Bring your own Trainer to FL](FL/FLBYOTrainer.ipynb) <span style="color:red">(New in V4)</span>
-5. AutoML
-    1. [AutoML Basics](AutoML/AutoML.ipynb)
+    6. [Homomorphic_Encryption](FL/Homomorphic_Encryption.ipynb) 
+    7. [Bring your own Trainer to FL](FL/FLBYOTrainer.ipynb) 
+3. AutoML
     2. [AutoML BYOC](AutoML/AutoML_BYOC.ipynb)
-6. Domain specific Examples:
-    1. [Digital pathology](DomainExamples/DigitalPathology/DP.ipynb) <span style="color:red">(New in V4)</span>
-7. Integration (coming soon)
-    1. Setup on AWS
-    2. End to End workflow 
-    3. Clara Train to Clara Deploy workflow
-    4. Integration with XNAT
+4. Domain specific Examples:
+    1. [Digital pathology](DomainExamples/DigitalPathology/DP.ipynb) 
+
 
 ## Pre-requisites 
 
-1. One or more Nvidia GPU. (2+GPUS are recommended for advanced features as AutoML).
+1. Nvidia Pascal or newer GPU. (2+GPUS are recommended for advanced features as AutoML).
 2. If you already have docker installed then user should be in the docker group. 
 Otherwise, sudo is needed to install the pre requisite 
  

@@ -1,4 +1,5 @@
 {
+  "CLARA_TRAIN_VERSION": "4.1.0",
   "use_gpu": true,
   "multi_gpu": false,
   "amp": true,
@@ -30,9 +31,9 @@
     {
         "name": "Spacingd",
         "args": {
-            "keys": ["image", "label"],
+            "keys": ["image"],
             "pixdim": [1.0, 1.0, 1.0],
-            "mode":["bilinear", "nearest"]
+            "mode":["bilinear"]
       }
     },
     {
@@ -47,13 +48,6 @@
       }
     },
     {
-      "name": "CropForegroundd",
-      "args": {
-        "keys": ["image", "label"],
-        "source_key": "image"
-      }
-    },
-    {
       "name": "ToTensord",
       "args": {
         "keys": ["image", "label"]
@@ -64,14 +58,17 @@
     "name": "Dataset",
     "data_list_file_path": "{DATASET_JSON}",
     "data_file_base_dir": "{DATA_ROOT}",
-    "data_list_key": "validation"
+    "data_list_key": "validation",
+      "args": {
+        "transform": "@pre_transforms"
+      }
   },
   "dataloader": {
     "name": "DataLoader",
     "args": {
+      "dataset": "@dataset",
       "batch_size": 1,
-      "shuffle": false,
-      "num_workers": 4
+      "shuffle": false
     }
   },
   "inferer": {
@@ -88,7 +85,7 @@
       "disabled": "{dont_load_ckpt_model}",
       "args": {
         "load_path": "{MMAR_CKPT}",
-        "load_dict": ["model"]
+        "load_dict": {"model": "@model"}
       }
     },
     {
@@ -99,20 +96,12 @@
       }
     },
     {
-      "name": "SegmentationSaver",
-      "args": {
-        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}",
-        "batch_transform": "lambda x: x['image_meta_dict']",
-        "output_transform": "lambda x: x['pred']"
-      }
-    },
-    {
       "name": "MetricsSaver",
       "args": {
         "save_dir": "{MMAR_EVAL_OUTPUT_PATH}",
         "metrics": ["val_mean_dice", "val_acc"],
         "metric_details": ["val_mean_dice"],
-        "batch_transform": "lambda x: x['image_meta_dict']",
+        "batch_transform": "#monai.handlers.from_engine(['image_meta_dict'])",
         "summary_ops": "*",
         "save_rank": 0
       }
@@ -127,34 +116,63 @@
       }
     },
     {
+      "name": "Invertd",
+      "args": {
+        "keys": ["pred"],
+        "transform": "@pre_transforms",
+        "orig_keys": "image",
+        "meta_keys": ["pred_meta_dict"],
+        "nearest_interp": false,
+        "to_tensor": true,
+        "device": "cuda"
+      }
+    },
+    {
       "name": "AsDiscreted",
       "args": {
         "keys": ["pred", "label"],
         "argmax": [true, false],
-        "to_onehot": true,
-        "n_classes": 2
+         "to_onehot": 2,
+         "n_classes": 2
+      }
+    },
+    {"disabled": true,
+      "name": "SaveImaged",
+      "args": {
+        "keys": "pred",
+        "output_dir": "{MMAR_EVAL_OUTPUT_PATH}"
       }
     }
   ],
-  "metrics": [
-    {
+  "key_metric": {
       "name": "MeanDice",
       "log_label": "val_mean_dice",
-      "is_key_metric": true,
       "args": {
-        "include_background": false,
-        "output_transform": "lambda x: (x['pred'], x['label'])"
+      "include_background": true,
+        "output_transform": "#monai.handlers.from_engine(['pred', 'label'])"
       }
     },
+    "additional_metrics": [
     {
       "name": "Accuracy",
       "log_label": "val_acc",
       "args": {
-        "output_transform": "lambda x: (x['pred'], x['label'])"
+          "output_transform": "#monai.handlers.from_engine(['pred', 'label'])"
       }
     }
   ],
   "evaluator": {
-    "name": "SupervisedEvaluator"
+      "name": "SupervisedEvaluator",
+      "args": {
+        "device": "cuda",
+        "val_data_loader": "@dataloader",
+        "network": "@model",
+        "inferer": "@inferer",
+        "postprocessing": "@post_transforms",
+        "key_val_metric": "@key_metric",
+        "additional_metrics": "@additional_metrics",
+        "val_handlers": "@handlers",
+        "amp": "{amp}"
+      }
+    }
   }
-}

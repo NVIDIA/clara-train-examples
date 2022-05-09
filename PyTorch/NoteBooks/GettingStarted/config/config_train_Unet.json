@@ -1,4 +1,5 @@
 {
+  "CLARA_TRAIN_VERSION": "4.1.0",
   "epochs": 2,
   "multi_gpu": false,
   "amp": true,
@@ -21,12 +22,14 @@
     "optimizer": {
       "name": "Adam",
       "args": {
+        "params": "#@model.parameters()",
         "lr": "{learning_rate}"
       }
     },
     "lr_scheduler": {
       "name": "StepLR",
       "args": {
+        "optimizer": "@optimizer",
         "step_size": 5000,
         "gamma": 0.1
       }
@@ -115,6 +118,7 @@
       "data_file_base_dir": "{DATA_ROOT}",
       "data_list_key": "training",
       "args": {
+        "transform": "@pre_transforms",
         "cache_num": 4,
         "cache_rate": 1.0,
         "num_workers": 2
@@ -123,9 +127,10 @@
     "dataloader": {
       "name": "DataLoader",
       "args": {
+        "dataset": "@dataset",
         "batch_size": 2,
         "shuffle": true,
-        "num_workers": 4
+        "num_workers": 0
       }
     },
     "inferer": {
@@ -137,30 +142,22 @@
         "disabled": "{dont_load_ckpt_model}",
         "args": {
           "load_path": "{MMAR_CKPT}",
-          "load_dict": ["model"]
+          "load_dict": {"model": "@model"}
         }
       },
       {
         "name": "LrScheduleHandler",
         "args": {
+          "lr_scheduler": "@lr_scheduler",
           "print_lr": true
         }
       },
       {
         "name": "ValidationHandler",
         "args": {
-          "interval": "{num_interval_per_valid}",
-          "epoch_level": true
-        }
-      },
-      {
-        "name": "CheckpointSaver",
-        "rank": 0,
-        "args": {
-          "save_dir": "{MMAR_CKPT_DIR}",
-          "save_dict": ["model", "optimizer", "lr_scheduler"],
-          "save_final": true,
-          "save_interval": 5
+            "validator": "@evaluator",
+          "epoch_level": true,
+          "interval": "{num_interval_per_valid}"
         }
       },
       {
@@ -168,7 +165,7 @@
         "rank": 0,
         "args": {
           "tag_name": "train_loss",
-          "output_transform": "lambda x: x['loss']"
+          "output_transform": "#monai.handlers.from_engine(['loss'], first=True)"
         }
       },
       {
@@ -177,7 +174,7 @@
         "args": {
           "log_dir": "{MMAR_CKPT_DIR}",
           "tag_name": "train_loss",
-          "output_transform": "lambda x: x['loss']"
+          "output_transform": "#monai.handlers.from_engine(['loss'], first=True)"
         }
       }
     ],
@@ -194,25 +191,31 @@
         "args": {
           "keys": ["pred", "label"],
           "argmax": [true, false],
-          "to_onehot": true,
+          "to_onehot": 2,
           "n_classes": 2
         }
       }
     ],
-    "metrics": [
-      {
-        "name": "Accuracy",
-        "log_label": "train_acc",
-        "is_key_metric": true,
-        "args": {
-          "output_transform": "lambda x: (x['pred'], x['label'])"
-        }
+    "key_metric": {
+      "name": "Accuracy",
+      "log_label": "train_acc",
+      "args": {
+        "output_transform": "#monai.handlers.from_engine(['pred', 'label'])"
       }
-    ],
+    },
     "trainer": {
       "name": "SupervisedTrainer",
       "args": {
-        "max_epochs": "{epochs}"
+        "max_epochs": "{epochs}",
+        "train_data_loader": "@dataloader",
+        "network": "@model",
+        "loss_function": "@loss",
+        "optimizer": "@optimizer",
+        "inferer": "@inferer",
+        "postprocessing": "@post_transforms",
+        "key_train_metric": "@key_metric",
+        "train_handlers": "@handlers",
+        "amp": "{amp}"
       }
     }
   },
@@ -222,10 +225,10 @@
         "ref": "LoadImaged"
       },
       {
-        "ref": "Spacingd"
+        "ref": "EnsureChannelFirstd"
       },
       {
-        "ref": "EnsureChannelFirstd"
+        "ref": "Spacingd"
       },
       {
         "ref": "ScaleIntensityRanged"
@@ -243,6 +246,7 @@
       "data_file_base_dir": "{DATA_ROOT}",
       "data_list_key": "validation",
       "args": {
+         "transform": "@pre_transforms",
         "cache_num": 4,
         "cache_rate": 1.0,
         "num_workers": 2
@@ -251,9 +255,10 @@
     "dataloader": {
       "name": "DataLoader",
       "args": {
+        "dataset": "@dataset",
         "batch_size": 1,
         "shuffle": false,
-        "num_workers": 4
+        "num_workers": 1
       }
     },
     "inferer": {
@@ -285,7 +290,7 @@
         "rank": 0,
         "args": {
           "save_dir": "{MMAR_CKPT_DIR}",
-          "save_dict": ["model","train_conf"],
+          "save_dict": {"model": "@model", "train_conf": "@conf"},
           "save_key_metric": true
         }
       }
@@ -298,26 +303,35 @@
         "ref": "AsDiscreted"
       }
     ],
-    "metrics": [
-      {
-        "name": "MeanDice",
-        "log_label": "val_mean_dice",
-        "is_key_metric": true,
-        "args": {
-          "include_background": false,
-          "output_transform": "lambda x: (x['pred'], x['label'])"
-        }
-      },
+    "key_metric": {
+      "name": "MeanDice",
+      "log_label": "val_mean_dice",
+      "args": {
+        "include_background": true,
+        "output_transform": "#monai.handlers.from_engine(['pred', 'label'])"
+      }
+    },
+    "additional_metrics": [
       {
         "name": "Accuracy",
         "log_label": "val_acc",
         "args": {
-          "output_transform": "lambda x: (x['pred'], x['label'])"
+          "output_transform": "#monai.handlers.from_engine(['pred', 'label'])"
         }
       }
     ],
     "evaluator": {
-      "name": "SupervisedEvaluator"
+      "name": "SupervisedEvaluator",
+      "args": {
+        "val_data_loader": "@dataloader",
+        "network": "@model",
+        "inferer": "@inferer",
+        "postprocessing": "@post_transforms",
+        "key_val_metric": "@key_metric",
+        "additional_metrics": "@additional_metrics",
+        "val_handlers": "@handlers",
+        "amp": "{amp}"
+      }
     }
   }
 }
