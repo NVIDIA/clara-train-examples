@@ -1,0 +1,15 @@
+{
+    /**
+     * The following options control the configuration of the Orthanc
+     * plugin adding support of WADO and DICOMweb.
+     **/
+
+    "DicomWeb" : {
+        "Enable" : true,         // Whether DICOMweb support is enabled
+        "Root" : "/dicom-web/",  // Root URI of the DICOMweb API (for QIDO-RS, STOW-RS and WADO-RS)
+        "EnableWado" : true,     // Whether WADO-URI (aka. WADO) support is enabled
+        "WadoRoot" : "/wado",    // Root URI of the WADO-URI (aka. WADO) API
+        "Host" : "localhost:8042",    // Hard-codes the name of the host for subsequent WADO-RS requests
+        "Ssl" : false            // Whether HTTPS should be used for subsequent WADO-RS requests
+    }
+}
